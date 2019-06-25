@@ -22,7 +22,7 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
 
     public class LogOperations
     {
-        private TelemetryClient _telemetry;
+        private TelemetryClient telemetryClient;
         private StringBuilder logTrail = new StringBuilder();
         private const string FUNCTION = "Function";
         private AppSettingsManager AppSettings;
@@ -37,12 +37,36 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
         {
 
             this.AppSettings = AppSettings;
-            _telemetry = new TelemetryClient();
-            TelemetryConfiguration.Active.InstrumentationKey = this.AppSettings.APPINSIGHTS_KEY;
-            _telemetry.Context.GlobalProperties.Add(InsightMetrics.Environment, this.AppSettings.Environment);
-            _telemetry.Context.GlobalProperties.Add(InsightMetrics.Application, "Apply to Convert");
-            _telemetry.Context.GlobalProperties.Add(InsightMetrics.Function, "Api Request");
-            _telemetry.Context.GlobalProperties.Add(InsightMetrics.CorrelationId, Guid.NewGuid().ToString());
+
+
+
+            //TelemetryConfiguration.Active.InstrumentationKey = "701cb5ad-8a37-49b3-ad10-ea1c66fb9dac";
+            
+            //var telemetryClient = new TelemetryClient();
+            //telemetryClient.TrackTrace("ConsoleShareOiunt  app- Trace Test COnstructor");
+            //telemetryClient.TrackException(new Exception("API ShareOiunt app- COnstructor  "));
+            //telemetryClient.Flush();
+
+
+            TelemetryConfiguration.Active.InstrumentationKey = this.AppSettings.Get(this.AppSettings.APPINSIGHTS_KEY);
+            telemetryClient = new TelemetryClient();
+            telemetryClient.Context.GlobalProperties.Add(InsightMetrics.Environment, this.AppSettings.Get(this.AppSettings.Environment));
+            telemetryClient.Context.GlobalProperties.Add(InsightMetrics.Application, "SIP API SharePoint Online");
+            telemetryClient.Context.GlobalProperties.Add(InsightMetrics.Function, "Api Request");
+            telemetryClient.Context.GlobalProperties.Add(InsightMetrics.CorrelationId, Guid.NewGuid().ToString());
+
+            //  _telemetry.TrackException(new Exception("Test Exception"));
+            //  _telemetry.TrackTrace("Hello World4 - from SP Api!");
+            //  _telemetry.Flush();
+
+
+
+            //TelemetryConfiguration.Active.InstrumentationKey = "701cb5ad-8a37-49b3-ad10-ea1c66fb9dac";
+            ////TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = true;
+            //var _telemetry = new TelemetryClient();
+            //_telemetry.TrackTrace("Hello World5!");
+            //_telemetry.Flush();
+
 
 #if DEBUG
             if (TelemetryConfiguration.Active.TelemetryChannel != null)
@@ -55,8 +79,8 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
         public string GetCorrelationID()
         {
 
-            if (_telemetry != null)
-                return _telemetry.Context.GlobalProperties[InsightMetrics.CorrelationId];
+            if (telemetryClient != null)
+                return telemetryClient.Context.GlobalProperties[InsightMetrics.CorrelationId];
 
             return "";
 
@@ -74,14 +98,20 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
         public void LogEvent(string eventName, IEnumerable<(string key, string value)> properties = null, IEnumerable<(string key, double value)> metrics = null)
         {
             var dictionary = properties?.ToDictionary(p => p.key, p => p.value.Substring(0, p.value.Length > 8000 ? 8000 : p.value.Length)) ?? new Dictionary<string, string>();
-            _telemetry.TrackEvent(eventName, dictionary, metrics?.ToDictionary(m => m.key, m => m.value));
+
+
+            
+
+            telemetryClient.TrackEvent(eventName, dictionary, metrics?.ToDictionary(m => m.key, m => m.value));
         }
 
         public void LogEvent(string eventName, string description, IEnumerable<(string key, string value)> properties = null, IEnumerable<(string key, double value)> metrics = null)
         {
             var dictionary = properties?.ToDictionary(p => p.key, p => p.value.Substring(0, p.value.Length > 8000 ? 8000 : p.value.Length)) ?? new Dictionary<string, string>();
             dictionary["Description"] = description;
-            _telemetry.TrackEvent(eventName, dictionary, metrics?.ToDictionary(m => m.key, m => m.value));
+
+           
+            telemetryClient.TrackEvent(eventName, dictionary, metrics?.ToDictionary(m => m.key, m => m.value));
         }
 
 
@@ -89,7 +119,8 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
         public void LogTrace(string message, SeverityLevel level, IEnumerable<(string key, string value)> properties = null)
         {
             var dictionary = properties?.ToDictionary(p => p.key, p => p.value.Substring(0, p.value.Length > 8000 ? 8000 : p.value.Length)) ?? new Dictionary<string, string>();
-            _telemetry.TrackTrace(message, level, dictionary);
+
+                                   telemetryClient.TrackTrace(message, level, dictionary);
         }
 
         public void LogException(Exception ex, IEnumerable<(string key, string value)> properties = null, IEnumerable<(string key, double value)> metrics = null)
@@ -104,7 +135,7 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
             var dictionary = properties?.ToDictionary(p => p.key, p => p.value.Substring(0, p.value.Length > 8000 ? 8000 : p.value.Length)) ?? new Dictionary<string, string>();
             dictionary["ExceptionMessage"] = errorMsg.ToString().Substring(0, errorMsg.Length > 8000 ? 8000 : errorMsg.Length);
 
-            _telemetry.TrackException(ex, dictionary, metrics?.ToDictionary(m => m.key, m => m.value));
+            telemetryClient.TrackException(ex, dictionary, metrics?.ToDictionary(m => m.key, m => m.value));
         }
 
 

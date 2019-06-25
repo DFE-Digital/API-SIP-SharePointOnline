@@ -10,6 +10,9 @@ using Newtonsoft.Json.Linq;
 using Microsoft.SharePoint.Client;
 using System.IO;
 using File = Microsoft.SharePoint.Client.File;
+using System.Threading.Tasks;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace DFE.SIP.API.SharePointOnline.Controllers
 {
@@ -23,7 +26,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         [HttpDelete]
         // [CustomAuthorize("SpContributor")]
         // DELETE api/values/5
-        public string Delete(string entityName, string recordName, string recordId, string fieldName, string fileName)
+        public async Task<string> Delete(string entityName, string recordName, string recordId, string fieldName, string fileName)
         {
             AppSettingsManager appSettings = new AppSettingsManager();
             LogOperations logger = new LogOperations(appSettings);
@@ -53,28 +56,28 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     var rootWeb = context.Web;
                     string fileNameToSearch = fieldName + filenameSeparator + fileName;
                     context.Load(rootWeb);
-                    context.ExecuteQuery();
+                    await Task.Run(() => context.ExecuteQueryRetryAsync(2));
                     File fileFound = rootWeb.GetFileByServerRelativeUrl($"{rootWeb.ServerRelativeUrl}/{sharePointLibraryName}/{sharePointFolderName}/{fileNameToSearch}");                    
                     context.Load(fileFound);
                     fileFound.DeleteObject();
-                    context.ExecuteQuery();
+                    await Task.Run(() => context.ExecuteQueryRetryAsync(2));
                                         
                     return $"File {fileName} was deleted";
                 }
 
             }
+            catch (ServerException ex)
+            {
+                if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
+                    return $"File {fileName} not found.";
+                else
+                {
+                    logger.LogException(ex);
+                    return $"Error CorrelationID: {logger.GetCorrelationID()}";
+                }
+            }
             catch (Exception ex)
             {
-                //// logger.LogException(ex);
-                //var valueInWebC = ConfigurationManager.AppSettings["USER_SECRETS_LOCATION"];
-                //var valueInAzure = Environment.GetEnvironmentVariable("AppSettings_USER_SECRETS_LOCATION");
-                //var valueInAzure2 = Environment.GetEnvironmentVariable("USER_SECRETS_LOCATION");
-
-                //var res = $"valueInWebC |{valueInWebC}| valueInAzure |{valueInAzure}| valueInAzure2 |{valueInAzure2}|  Error Detailed {ex.Message}";
-                //return new string[] { res };
-
-                ////return $"Error CorrelationID: {logger.GetCorrelationID()}";
-
                 logger.LogException(ex);
                 return $"Error CorrelationID: {logger.GetCorrelationID()}";
             }
@@ -84,7 +87,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         [HttpGet]
         // [CustomAuthorize("SpContributor")]
         // GET: api/SharePointFiles
-        public string Get(string entityName, string recordName, string recordId, string fieldName)
+        public async Task<string> Get(string entityName, string recordName, string recordId, string fieldName)
         {
             AppSettingsManager appSettings = new AppSettingsManager();
             LogOperations logger = new LogOperations(appSettings);
@@ -115,7 +118,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     Folder folderTarget = rootWeb.GetFolderByServerRelativeUrl($"{sharePointLibraryName}/{sharePointFolderName}");
                     FileCollection files = folderTarget.Files;
                     context.Load(files);
-                    context.ExecuteQuery();
+                    await Task.Run(() => context.ExecuteQueryRetryAsync(2));
 
                     List<string> listFileNames = new List<string>();
                     string fieldNameMarker = fieldName + filenameSeparator;
@@ -130,18 +133,24 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 }
 
             }
+            catch (ServerException ex)
+            {
+                if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
+                {                    
+                    // no files found.
+                    JObject result = new JObject();
+                    result.Add("Files", JToken.FromObject(new List<String>()));
+                    return result.ToString(Newtonsoft.Json.Formatting.None);
+                }
+                    
+                else
+                {
+                    logger.LogException(ex);
+                    return $"Error CorrelationID: {logger.GetCorrelationID()}";
+                }
+            }
             catch (Exception ex)
             {
-                //// logger.LogException(ex);
-                //var valueInWebC = ConfigurationManager.AppSettings["USER_SECRETS_LOCATION"];
-                //var valueInAzure = Environment.GetEnvironmentVariable("AppSettings_USER_SECRETS_LOCATION");
-                //var valueInAzure2 = Environment.GetEnvironmentVariable("USER_SECRETS_LOCATION");
-
-                //var res = $"valueInWebC |{valueInWebC}| valueInAzure |{valueInAzure}| valueInAzure2 |{valueInAzure2}|  Error Detailed {ex.Message}";
-                //return new string[] { res };
-
-                ////return $"Error CorrelationID: {logger.GetCorrelationID()}";
-
                 logger.LogException(ex);
                 return $"Error CorrelationID: {logger.GetCorrelationID()}";
             }
@@ -151,8 +160,10 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         // POST: api/SharePointFiles
         // [CustomAuthorize("SpContributor")]
         [HttpPost]
-        public string Post([FromBody]string value)
+        public async Task<string> Post([FromBody]string value)
         {
+
+            
 
             AppSettingsManager appSettings = new AppSettingsManager();
             LogOperations logger = new LogOperations(appSettings);
@@ -187,7 +198,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
 
 
-                var sharePointLibraryName = $"{entityName}";
+                var sharePointLibraryNameInURL = $"{entityName}"; // ListName is actually diferent and SharePointOnlineUtilities.A2CConvertDynamicsEntityNameToListName is used to get its value.
                 var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-","")}";
                 var sharePointFileName = $"{fieldName}{filenameSeparator}{fileName}";
                                
@@ -200,12 +211,16 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
 
-                    var rootWeb = context.Web;
-                    //context.Load(rootWeb, web => web.Title);
+                   // var rootWeb = context.Web;
+                    
+                    Folder folderTarget = await SharePointOnlineUtilities.ensureFolderExistsAsync($"{sharePointLibraryNameInURL}/{sharePointFolderName}",sharePointFolderName,
+                       SharePointOnlineUtilities.A2CConvertDynamicsEntityNameToListName(sharePointLibraryNameInURL),
+                       context);
 
-                    Folder folderTarget = rootWeb.GetFolderByServerRelativeUrl($"{sharePointLibraryName}/{sharePointFolderName}");
-                    context.Load(folderTarget);
-                    context.ExecuteQuery();
+
+
+                   // context.Load(folderTarget);
+                   // await Task.Run(() => context.ExecuteQueryRetryAsync(2));
 
                     FileCreationInformation newFile = new FileCreationInformation();
                     var bytes = Convert.FromBase64String(fileContentBase64);
@@ -218,7 +233,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     var itemRepresentationOFile = uploadRepresentationOfFile.ListItemAllFields;
                     itemRepresentationOFile.Update();
                     context.Load(itemRepresentationOFile);
-                    context.ExecuteQueryRetry(2);
+                    await Task.Run(() => context.ExecuteQueryRetryAsync(2));
 
                     return fileName;
                 }
@@ -226,8 +241,9 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             }
             catch (Exception ex)
             {
-                 logger.LogException(ex);
-                 return $"Error CorrelationID: {logger.GetCorrelationID()}";
+                logger.LogException(ex);
+                return $"Error CorrelationID: {logger.GetCorrelationID()}";
+              
             }
 
 
