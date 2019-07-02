@@ -34,8 +34,8 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             try
             {
 
-                if (!(entityName.HasAValueThatIsNotAWhiteSpace() && fieldName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() &&
-                      recordId.HasAValueThatIsNotAWhiteSpace() &&   fieldName.HasAValueThatIsNotAWhiteSpace()))
+                if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() && recordId.HasAValueThatIsNotAWhiteSpace() &&
+                      fieldName.HasAValueThatIsNotAWhiteSpace() && fileName.HasAValueThatIsNotAWhiteSpace()))
                     throw new Exception($"Bad Format in Request parameters expected values for entity,recordName,recordId,fieldName :{entityName},{recordName},{recordId},{fieldName}");
 
 

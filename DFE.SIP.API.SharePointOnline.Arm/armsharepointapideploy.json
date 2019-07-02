@@ -1,0 +1,414 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sites_webapi_name": {
+      "type": "String"
+    },
+    "serverfarms_name": {
+      "type": "String"
+    },
+    "sites_webapi_domain": {
+      "type": "String"
+    },
+    "appInsights_Name": {
+      "type": "String"
+    },
+    "locationRegion": {
+      "defaultValue": "West Europe",
+      "type": "String"
+    },
+    "SharePointSiteCollectionUrl": {
+      "type": "String"
+    },
+    "SPAuthorizedAppsIDs": {
+      "defaultValue": "AzureDevOps",
+      "type": "String"
+    },
+    "Authority": {
+      "defaultValue": "https://login.microsoftonline.com/",
+      "type": "String"
+    },
+    "BuildVersion": {
+      "defaultValue": "AzureDevOps",
+      "type": "String"
+    },
+    "ClientId": {
+      "defaultValue": "AzureDevOps",
+      "type": "String"
+    },
+    "Secret": {
+      "defaultValue": "AzureDevOps",
+      "type": "String"
+    },
+    "TenantId": {
+      "defaultValue": "Educationgovuk.onmicrosoft.com",
+      "type": "String"
+    },
+    "HealthKey": {
+      "defaultValue": "AzureDevOps",
+      "type": "String"
+    },
+    "Environment": {
+      "defaultValue": "Development",
+      "type": "String"
+    },
+    "Audience": {
+      "defaultValue": "AzureDevOps",
+      "type": "String"
+    },
+    "BuildVersion": {
+      "defaultValue": "AzureDevOps",
+      "type": "String"
+    }
+  },
+  "variables": {    
+  },
+  "resources": [
+
+    {
+      "type": "microsoft.insights/components",
+      "apiVersion": "2015-05-01",
+      "name": "[parameters('appInsights_Name')]",
+      "location": "[parameters('locationRegion')]",
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web",
+        "Request_Source": "IbizaWebAppExtensionCreate"
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-09-01",
+      "name": "[parameters('serverfarms_name')]",
+      "location": "[parameters('locationRegion')]",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard",
+        "size": "S1",
+        "family": "S",
+        "capacity": 1
+      },
+      "kind": "app",
+      "properties": {
+        "name": "[parameters('serverfarms_name')]",
+        "perSiteScaling": false,
+        "reserved": false,
+        "targetWorkerCount": 0,
+        "targetWorkerSizeId": 0
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "name": "[parameters('sites_webapi_name')]",
+      "location": "[parameters('locationRegion')]",
+      "kind": "app",
+      "properties": {
+        "enabled": true,
+        "hostNameSslStates": [
+          {
+            "name": "[concat(parameters('sites_webapi_name'),'.', parameters('sites_webapi_domain'))]",
+            "sslState": "Disabled",
+            "hostType": "Standard"
+          },
+          {
+            "name": "[concat(parameters('sites_webapi_name'),'.scm.', parameters('sites_webapi_domain'))]",
+            "sslState": "Disabled",
+            "hostType": "Repository"
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_name'))]",
+        "reserved": false,
+        "scmSiteAlsoStopped": false,
+        "clientAffinityEnabled": true,
+        "clientCertEnabled": false,
+        "hostNamesDisabled": false,
+        "containerSize": 0,
+        "dailyMemoryTimeQuota": 0,
+        "httpsOnly": false      
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_name'))]"
+      ],
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('sites_webapi_name'))]"
+          ],
+          "tags": {
+            "displayName": "appsettings"
+          },
+          "properties": {
+            "CLIENT_ID": "[parameters('ClientId')]",
+            "ida:Tenant": "[parameters('TenantId')]",
+            "CLIENT_SECRET": "[parameters('Secret')]",
+            "Environment": "[parameters('Environment')]",
+            "ida:Audience": "[parameters('Audience')]",
+            "SharePointSiteCollectionUrl": "[parameters('SharePointSiteCollectionUrl')]",
+            "SPAuthorizedAppsIDs": "[parameters('SPAuthorizedAppsIDs')]",
+            "USER_SECRETS_LOCATION": "",
+            "APPINSIGHTS_KEY": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsights_Name')), '2014-04-01').InstrumentationKey]",
+            "HealthKey": "[parameters('HealthKey')]",
+            "BuildVersion": "[parameters('BuildVersion')]",
+            "ASPNETCORE_ENVIRONMENT": "[parameters('Environment')]"
+          }
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2016-08-01",
+      "name": "[concat(parameters('sites_webapi_name'), '/web')]",
+      "location": "[parameters('locationRegion')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_webapi_name'))]"
+      ],
+      "properties": {
+        "numberOfWorkers": 1,
+        "defaultDocuments": [
+          "Default.htm",
+          "Default.html",
+          "Default.asp",
+          "index.htm",
+          "index.html",
+          "iisstart.htm",
+          "default.aspx",
+          "index.php",
+          "hostingstart.html"
+        ],
+        "netFrameworkVersion": "v4.0",
+        "phpVersion": "5.6",
+        "pythonVersion": "",
+        "nodeVersion": "",
+        "linuxFxVersion": "",
+        "requestTracingEnabled": true,
+        "requestTracingExpirationTime": "9999-12-31T23:59:00Z",
+        "remoteDebuggingEnabled": false,
+        "remoteDebuggingVersion": "VS2017",
+        "httpLoggingEnabled": true,
+        "logsDirectorySizeLimit": 35,
+        "detailedErrorLoggingEnabled": true,        
+        "scmType": "None",
+        "use32BitWorkerProcess": true,
+        "webSocketsEnabled": false,
+        "alwaysOn": true,
+        "appCommandLine": "",
+        "managedPipelineMode": "Integrated",
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": false,
+            "virtualDirectories": null
+          }
+        ],
+        "winAuthAdminState": 0,
+        "winAuthTenantState": 0,
+        "customAppPoolIdentityAdminState": false,
+        "customAppPoolIdentityTenantState": false,
+        "loadBalancing": "LeastRequests",
+        "routingRules": [],
+        "experiments": {
+          "rampUpRules": []
+        },
+        "autoHealEnabled": false,
+        "vnetName": "",
+        "siteAuthEnabled": false,
+        "siteAuthSettings": {
+          "enabled": null,
+          "unauthenticatedClientAction": null,
+          "tokenStoreEnabled": null,
+          "allowedExternalRedirectUrls": null,
+          "defaultProvider": null,
+          "clientId": null,
+          "clientSecret": null,
+          "clientSecretCertificateThumbprint": null,
+          "issuer": null,
+          "allowedAudiences": null,
+          "additionalLoginParams": null,
+          "isAadAutoProvisioned": false,
+          "googleClientId": null,
+          "googleClientSecret": null,
+          "googleOAuthScopes": null,
+          "facebookAppId": null,
+          "facebookAppSecret": null,
+          "facebookOAuthScopes": null,
+          "twitterConsumerKey": null,
+          "twitterConsumerSecret": null,
+          "microsoftAccountClientId": null,
+          "microsoftAccountClientSecret": null,
+          "microsoftAccountOAuthScopes": null
+        },
+        "localMySqlEnabled": false,
+        "http20Enabled": false,
+        "minTlsVersion": "1.2",
+        "ftpsState": "AllAllowed",
+        "reservedInstanceCount": 0
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/hostNameBindings",
+      "apiVersion": "2016-08-01",
+      "name": "[concat(parameters('sites_webapi_name'), '/', parameters('sites_webapi_name'), '.azurewebsites.net')]",
+      "location": "[parameters('locationRegion')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_webapi_name'))]"
+      ],
+      "properties": {
+        "siteName": "[parameters('sites_webapi_name')]",
+        "hostNameType": "Verified"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/slots",
+      "apiVersion": "2016-08-01",
+      "name": "[concat(parameters('sites_webapi_name'), '/SlotB')]",
+      "location": "[parameters('locationRegion')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_webapi_name'))]"
+      ],
+      "kind": "app",
+      "properties": {
+        "enabled": true,
+        "hostNameSslStates": [
+          {
+            "name": "[concat(parameters('sites_webapi_name'),'-slotb.', parameters('sites_webapi_domain'))]",
+            "sslState": "Disabled",
+            "hostType": "Standard"
+          },
+          {
+            "name": "[concat(parameters('sites_webapi_name'),'-slotb.scm.', parameters('sites_webapi_domain'))]",
+            "sslState": "Disabled",
+            "hostType": "Repository"
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_name'))]",
+        "reserved": false,
+        "scmSiteAlsoStopped": false,
+        "clientAffinityEnabled": true,
+        "clientCertEnabled": false,
+        "hostNamesDisabled": false,
+        "containerSize": 0,
+        "dailyMemoryTimeQuota": 0,
+        "httpsOnly": false
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/slots/config",
+      "apiVersion": "2016-08-01",
+      "name": "[concat(parameters('sites_webapi_name'), '/SlotB/web')]",
+      "location": "[parameters('locationRegion')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/slots', parameters('sites_webapi_name'), 'SlotB')]",
+        "[resourceId('Microsoft.Web/sites', parameters('sites_webapi_name'))]"
+      ],
+      "properties": {
+        "CLIENT_ID": "[parameters('ClientId')]",
+        "ida:Tenant": "[parameters('TenantId')]",
+        "CLIENT_SECRET": "[parameters('Secret')]",
+        "Environment": "[parameters('Environment')]",
+        "ida:Audience": "[parameters('Audience')]",
+        "SharePointSiteCollectionUrl": "[parameters('SharePointSiteCollectionUrl')]",
+        "SPAuthorizedAppsIDs": "[parameters('SPAuthorizedAppsIDs')]",
+        "USER_SECRETS_LOCATION": "",
+        "APPINSIGHTS_KEY": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsights_Name')), '2014-04-01').InstrumentationKey]",
+        "AppSettings:HealthKey": "[parameters('HealthKey')]",
+        "ASPNETCORE_ENVIRONMENT": "[parameters('Environment')]",
+        "numberOfWorkers": 1,
+        "defaultDocuments": [
+          "Default.htm",
+          "Default.html",
+          "Default.asp",
+          "index.htm",
+          "index.html",
+          "iisstart.htm",
+          "default.aspx",
+          "index.php",
+          "hostingstart.html"
+        ],
+        "netFrameworkVersion": "v4.0",
+        "phpVersion": "5.6",
+        "pythonVersion": "",
+        "nodeVersion": "",
+        "linuxFxVersion": "",
+        "requestTracingEnabled": true,
+        "requestTracingExpirationTime": "9999-12-31T23:59:00Z",
+        "remoteDebuggingEnabled": false,
+        "remoteDebuggingVersion": "VS2017",
+        "httpLoggingEnabled": true,
+        "logsDirectorySizeLimit": 35,
+        "detailedErrorLoggingEnabled": true,
+        "scmType": "VSTSRM",
+        "use32BitWorkerProcess": true,
+        "webSocketsEnabled": false,
+        "alwaysOn": true,
+        "appCommandLine": "",
+        "managedPipelineMode": "Integrated",
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": false,
+            "virtualDirectories": null
+          }
+        ],
+        "winAuthAdminState": 0,
+        "winAuthTenantState": 0,
+        "customAppPoolIdentityAdminState": false,
+        "customAppPoolIdentityTenantState": false,
+        "loadBalancing": "LeastRequests",
+        "autoHealEnabled": false,
+        "vnetName": "",
+        "siteAuthEnabled": false,
+        "siteAuthSettings": {
+          "enabled": null,
+          "unauthenticatedClientAction": null,
+          "tokenStoreEnabled": null,
+          "allowedExternalRedirectUrls": null,
+          "defaultProvider": null,
+          "clientId": null,
+          "clientSecret": null,
+          "clientSecretCertificateThumbprint": null,
+          "issuer": null,
+          "allowedAudiences": null,
+          "additionalLoginParams": null,
+          "isAadAutoProvisioned": false,
+          "googleClientId": null,
+          "googleClientSecret": null,
+          "googleOAuthScopes": null,
+          "facebookAppId": null,
+          "facebookAppSecret": null,
+          "facebookOAuthScopes": null,
+          "twitterConsumerKey": null,
+          "twitterConsumerSecret": null,
+          "microsoftAccountClientId": null,
+          "microsoftAccountClientSecret": null,
+          "microsoftAccountOAuthScopes": null
+        },
+        "localMySqlEnabled": false,
+        "http20Enabled": false,
+        "minTlsVersion": "1.2",
+        "ftpsState": "AllAllowed",
+        "reservedInstanceCount": 0
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/slots/hostNameBindings",
+      "apiVersion": "2016-08-01",
+      "name": "[concat(parameters('sites_webapi_name'), '/SlotB/', parameters('sites_webapi_name'), '-slotb.', parameters('sites_webapi_domain'))]",
+      "location": "[parameters('locationRegion')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/slots', parameters('sites_webapi_name'), 'SlotB')]",
+        "[resourceId('Microsoft.Web/sites', parameters('sites_webapi_name'))]"
+      ],
+      "properties": {
+        "siteName": "[concat(parameters('sites_webapi_name'),'(SlotB)')]",
+        "hostNameType": "Verified"
+      }
+    }
+  ]
+}
