@@ -13,6 +13,12 @@ using File = Microsoft.SharePoint.Client.File;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
+using System.Net;
+using HttpDeleteAttribute = System.Web.Http.HttpDeleteAttribute;
+using AuthenticationManager = OfficeDevPnP.Core.AuthenticationManager;
+using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
+using HttpPostAttribute = System.Web.Http.HttpPostAttribute;
+using System.Web.Mvc;
 
 namespace DFE.SIP.API.SharePointOnline.Controllers
 {
@@ -24,9 +30,9 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
 
         [HttpDelete]
-        // [CustomAuthorize("SpContributor")]
+        [CustomAuthorize("SpContributor")]
         // DELETE api/values/5
-        public async Task<string> Delete(string entityName, string recordName, string recordId, string fieldName, string fileName)
+        public async Task<HttpResponseMessage> Delete(string entityName, string recordName, string recordId, string fieldName, string fileName)
         {
             AppSettingsManager appSettings = new AppSettingsManager();
             LogOperations logger = new LogOperations(appSettings);
@@ -36,11 +42,22 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
                 if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() && recordId.HasAValueThatIsNotAWhiteSpace() &&
                       fieldName.HasAValueThatIsNotAWhiteSpace() && fileName.HasAValueThatIsNotAWhiteSpace()))
-                    throw new Exception($"Bad Format in Request parameters expected values for entity,recordName,recordId,fieldName :{entityName},{recordName},{recordId},{fieldName}");
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"Bad Format in Request parameters expected values for entity,recordName,recordId,fieldName :{entityName},{recordName},{recordId},{fieldName}"),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+
+   
 
 
                 if(! (appSettings.Get(appSettings.A2CEntitiesAllowedToCRUDFiles).Split(',')).Contains(entityName))
-                    throw new Exception($"EntityName {entityName} not allowed because it is now present in A2CEntitiesAllowedToCRUDFiles appsettings ");
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"EntityName {entityName} not allowed because it is now present in A2CEntitiesAllowedToCRUDFiles appsettings "),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+                
 
 
                 var sharePointLibraryName = $"{entityName}";
@@ -61,33 +78,53 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     context.Load(fileFound);
                     fileFound.DeleteObject();
                     await Task.Run(() => context.ExecuteQueryRetryAsync(2));
-                                        
-                    return $"File {fileName} was deleted";
+
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"File {fileName} was deleted"),
+                        StatusCode = HttpStatusCode.OK
+                    };
+
                 }
 
             }
             catch (ServerException ex)
             {
                 if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
-                    return $"File {fileName} not found.";
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"File {fileName} not found."),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
                 else
                 {
                     logger.LogException(ex);
-                    return $"Error CorrelationID: {logger.GetCorrelationID()}";
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+                    
+                    
                 }
             }
             catch (Exception ex)
             {
                 logger.LogException(ex);
-                return $"Error CorrelationID: {logger.GetCorrelationID()}";
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                    StatusCode = HttpStatusCode.BadRequest
+                };
+                
             }
         }
 
 
         [HttpGet]
-        // [CustomAuthorize("SpContributor")]
+         [CustomAuthorize("SpContributor")]
         // GET: api/SharePointFiles
-        public async Task<string> Get(string entityName, string recordName, string recordId, string fieldName)
+        public async Task<HttpResponseMessage> Get(string entityName, string recordName, string recordId, string fieldName)
         {
             AppSettingsManager appSettings = new AppSettingsManager();
             LogOperations logger = new LogOperations(appSettings);
@@ -97,12 +134,22 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
                 if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() &&
                       recordId.HasAValueThatIsNotAWhiteSpace() &&  fieldName.HasAValueThatIsNotAWhiteSpace()))
-                    throw new Exception($"Bad Format in Request parameters expected values for entity,recordName,recordId,fieldName :{entityName},{recordName},{recordId},{fieldName}");
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"Bad Format in Request parameters expected values for entity,recordName,recordId,fieldName :{entityName},{recordName},{recordId},{fieldName}"),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+
+                
 
                 if (!(appSettings.Get(appSettings.A2CEntitiesAllowedToCRUDFiles).Split(',')).Contains(entityName))
-                    throw new Exception($"EntityName {entityName} not allowed because it is now present in A2CEntitiesAllowedToCRUDFiles appsettings ");
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"EntityName {entityName} not allowed because it is now present in A2CEntitiesAllowedToCRUDFiles appsettings "),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
 
-
+                
                 var sharePointLibraryName = $"{entityName}";
                 var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-", "")}";
 
@@ -129,7 +176,13 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     JObject result = new JObject();
                     result.Add("Files", JToken.FromObject(listFileNames));
 
-                    return result.ToString(Newtonsoft.Json.Formatting.None);
+
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"{result.ToString(Newtonsoft.Json.Formatting.None)}"),
+                        StatusCode = HttpStatusCode.OK
+                    };
+
                 }
 
             }
@@ -140,27 +193,44 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     // no files found.
                     JObject result = new JObject();
                     result.Add("Files", JToken.FromObject(new List<String>()));
-                    return result.ToString(Newtonsoft.Json.Formatting.None);
+
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"{result.ToString(Newtonsoft.Json.Formatting.None)}"),
+                        StatusCode = HttpStatusCode.OK
+                    };
+
+                    
                 }
                     
                 else
                 {
                     logger.LogException(ex);
-                    return $"Error CorrelationID: {logger.GetCorrelationID()}";
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+                    
                 }
             }
             catch (Exception ex)
             {
                 logger.LogException(ex);
-                return $"Error CorrelationID: {logger.GetCorrelationID()}";
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                    StatusCode = HttpStatusCode.BadRequest
+                };                
+
             }
         }
 
 
         // POST: api/SharePointFiles
-        // [CustomAuthorize("SpContributor")]
+         [CustomAuthorize("SpContributor")]
         [HttpPost]
-        public async Task<string> Post([FromBody]string value)
+        public async Task<HttpResponseMessage> Post([FromBody]string value)
         {
 
             
@@ -172,9 +242,11 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             {
                 
                 if (!value.HasAValueThatIsNotAWhiteSpace())
-                    throw new Exception($"Bad Format in Request body:|{value}|");
-
-
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"Bad Format in Request body:|{value}|"),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
 
                 JObject fileUploadRequest = JObject.Parse(value);
 
@@ -186,18 +258,25 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 var fileContentBase64 = fileUploadRequest["fileContentBase64"].Value<string>();
 
 
-                if (  !( entityName.HasAValueThatIsNotAWhiteSpace() &&   recordName.HasAValueThatIsNotAWhiteSpace() &&
-                         recordId.HasAValueThatIsNotAWhiteSpace() &&     fileName.HasAValueThatIsNotAWhiteSpace() &&
-                         (!String.IsNullOrEmpty(fileContentBase64)) &&   fieldName.HasAValueThatIsNotAWhiteSpace()) )
-                    throw new Exception($"Bad Format in Request parameters expected values for entity,recordName,recordId,fieldName :{entityName},{recordName},{recordId},{fieldName}");
+                if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() &&
+                         recordId.HasAValueThatIsNotAWhiteSpace() && fileName.HasAValueThatIsNotAWhiteSpace() &&
+                         (!String.IsNullOrEmpty(fileContentBase64)) && fieldName.HasAValueThatIsNotAWhiteSpace()))
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"Bad Format in Request parameters expected values for entity,recordName,recordId,fieldName :{entityName},{recordName},{recordId},{fieldName}"),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
 
 
                 if (!(appSettings.Get(appSettings.A2CEntitiesAllowedToCRUDFiles).Split(',')).Contains(entityName))
-                    throw new Exception($"EntityName {entityName} not allowed because it is now present in A2CEntitiesAllowedToCRUDFiles appsettings ");
-
-
-
-
+                {
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"EntityName {entityName} not allowed because it is now present in A2CEntitiesAllowedToCRUDFiles appsettings "),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+                }
+             
                 var sharePointLibraryNameInURL = $"{entityName}"; // ListName is actually diferent and SharePointOnlineUtilities.A2CConvertDynamicsEntityNameToListName is used to get its value.
                 var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-","")}";
                 var sharePointFileName = $"{fieldName}{filenameSeparator}{fileName}";
@@ -235,15 +314,26 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     context.Load(itemRepresentationOFile);
                     await Task.Run(() => context.ExecuteQueryRetryAsync(2));
 
-                    return fileName;
+
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent(fileName),
+                        StatusCode = HttpStatusCode.OK
+                    };
+                    
+                  
                 }
                
             }
             catch (Exception ex)
             {
                 logger.LogException(ex);
-                return $"Error CorrelationID: {logger.GetCorrelationID()}";
-              
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                    StatusCode = HttpStatusCode.BadRequest
+                };             
+                               
             }
 
 
