@@ -162,6 +162,7 @@
             "type": "config",
             "apiVersion": "2015-08-01",
             "dependsOn": [
+              "[resourceId('Microsoft.Web/sites/slots', parameters('sites_webapi_name'), 'SlotB')]",
               "[resourceId('Microsoft.Web/sites', parameters('sites_webapi_name'))]"
             ],
             "tags": {
