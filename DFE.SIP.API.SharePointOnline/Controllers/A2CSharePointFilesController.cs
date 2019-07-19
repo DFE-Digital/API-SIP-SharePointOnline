@@ -122,7 +122,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
 
         [HttpGet]
-         [CustomAuthorize("SpContributor")]
+        [CustomAuthorize("SpContributor")]
         // GET: api/SharePointFiles
         public async Task<HttpResponseMessage> Get(string entityName, string recordName, string recordId, string fieldName)
         {
@@ -228,7 +228,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
 
         // POST: api/SharePointFiles
-         [CustomAuthorize("SpContributor")]
+        [CustomAuthorize("SpContributor")]
         [HttpPost]
         public async Task<HttpResponseMessage> Post([FromBody]string value)
         {
