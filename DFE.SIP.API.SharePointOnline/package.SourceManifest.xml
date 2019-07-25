@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<sitemanifest>
-  <IisApp path="C:\Users\jcarvalho\source\repos\DFE.SIP.API.SharePointOnline\DFE.SIP.API.SharePointOnline\obj\release\Package\PackageTmp" />
-  <setAcl path="C:\Users\jcarvalho\source\repos\DFE.SIP.API.SharePointOnline\DFE.SIP.API.SharePointOnline\obj\release\Package\PackageTmp" setAclResourceType="Directory" />
-  <setAcl path="C:\Users\jcarvalho\source\repos\DFE.SIP.API.SharePointOnline\DFE.SIP.API.SharePointOnline\obj\release\Package\PackageTmp" setAclUser="anonymousAuthenticationUser" setAclResourceType="Directory" />
-</sitemanifest>
