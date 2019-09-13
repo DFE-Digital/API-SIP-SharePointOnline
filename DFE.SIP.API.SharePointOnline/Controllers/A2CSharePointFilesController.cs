@@ -232,7 +232,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         [HttpGet]
        // [CustomAuthorize("SpContributor")]
         // GET: api/SharePointFiles
-        public async Task<HttpResponseMessage> Download(string entityName, string recordName, string recordId, string relativePath, string fieldName = null, string fileName = null)
+        public async Task<HttpResponseMessage> Download(string entityName, string recordName, string recordId, string relativePath = null, string fieldName = null, string fileName = null)
         {
             AppSettingsManager appSettings = new AppSettingsManager();
             LogOperations logger = new LogOperations(appSettings);
