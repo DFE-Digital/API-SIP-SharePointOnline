@@ -230,7 +230,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
 
         [HttpGet]
-       // [CustomAuthorize("SpContributor")]
+        [CustomAuthorize("SpContributor")]
         // GET: api/SharePointFiles
         public async Task<HttpResponseMessage> Download(string entityName, string recordName, string recordId, string relativePath = null, string fieldName = null, string fileName = null)
         {
