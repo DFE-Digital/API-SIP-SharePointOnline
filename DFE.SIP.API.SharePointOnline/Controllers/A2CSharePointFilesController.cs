@@ -19,6 +19,7 @@ using AuthenticationManager = OfficeDevPnP.Core.AuthenticationManager;
 using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
 using HttpPostAttribute = System.Web.Http.HttpPostAttribute;
 using System.Web.Mvc;
+using System.Text;
 
 namespace DFE.SIP.API.SharePointOnline.Controllers
 {
@@ -225,6 +226,127 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
             }
         }
+
+
+
+        [HttpGet]
+        [CustomAuthorize("SpContributor")]
+        // GET: api/SharePointFiles
+        public async Task<HttpResponseMessage> Download(string entityName, string recordName, string recordId, string relativePath = null, string fieldName = null, string fileName = null)
+        {
+            AppSettingsManager appSettings = new AppSettingsManager();
+            LogOperations logger = new LogOperations(appSettings);
+
+            try
+            {
+
+                if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() &&
+                      recordId.HasAValueThatIsNotAWhiteSpace() ))
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"Bad Format in Request parameters expected values for entity,recordName,recordId,fieldName :{entityName},{recordName},{recordId},{fieldName}"),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+
+
+
+                if (!(appSettings.Get(appSettings.A2CEntitiesAllowedToCRUDFiles).Split(',')).Contains(entityName))
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"EntityName {entityName} not allowed because it is now present in A2CEntitiesAllowedToCRUDFiles appsettings "),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+
+
+                var sharePointLibraryName = $"{entityName}";
+                var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-", "")}";
+
+                // Authenticate against SPO with an App-Only access token
+                AuthenticationManager auth = new AuthenticationManager();
+                using (var context = auth.GetAppOnlyAuthenticatedContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
+                appSettings.Get(appSettings.CLIENT_ID),
+                appSettings.Get(appSettings.CLIENT_SECRET)))
+                {
+
+                    var rootWeb = context.Web;
+
+
+                    if (!String.IsNullOrEmpty(relativePath) )
+                    {
+                        context.Load(rootWeb);
+                        await Task.Run(() => context.ExecuteQueryRetryAsync(2));
+                        File file = rootWeb.GetFileByServerRelativeUrl(
+                                                (rootWeb.ServerRelativeUrl.EndsWith("/") ? rootWeb.ServerRelativeUrl : rootWeb.ServerRelativeUrl + "/") +
+                                                $"{sharePointLibraryName}/{sharePointFolderName}{relativePath}");
+                        var stream = file.OpenBinaryStream();
+                        context.Load(file);
+                        await Task.Run(() => context.ExecuteQueryRetryAsync(2));
+
+                       
+                        using (var reader = new StreamReader(stream.Value, Encoding.UTF8))
+                        {                                                        
+                            string result = reader.ReadToEnd();
+                            return new HttpResponseMessage()
+                            {
+                                Content = new StringContent(result),
+                                StatusCode = HttpStatusCode.OK
+                            };
+                        }
+                    }
+
+
+                    //Not Found
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($""),
+                        StatusCode = HttpStatusCode.NotFound
+                    };
+
+                }
+
+            }
+            catch (ServerException ex)
+            {
+                if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
+                {
+                    // no files found.
+                    JObject result = new JObject();
+                    result.Add("Files", JToken.FromObject(new List<String>()));
+
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"{result.ToString(Newtonsoft.Json.Formatting.None)}"),
+                        StatusCode = HttpStatusCode.OK
+                    };
+
+
+                }
+
+                else
+                {
+                    logger.LogException(ex);
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                    StatusCode = HttpStatusCode.BadRequest
+                };
+
+            }
+        }
+
+
+
 
 
         // POST: api/SharePointFiles
