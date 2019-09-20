@@ -236,9 +236,13 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         {
             AppSettingsManager appSettings = new AppSettingsManager();
             LogOperations logger = new LogOperations(appSettings);
-            string calculatedUrl = ""; 
+            string calculatedUrl = "";
+
+            logger.LogEvent($"Download1 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+
             try
             {
+                logger.LogEvent($"Download2 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() &&
                       recordId.HasAValueThatIsNotAWhiteSpace() ))
@@ -249,6 +253,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     };
 
 
+                logger.LogEvent($"Download3 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 if (!(appSettings.Get(appSettings.A2CEntitiesAllowedToCRUDFiles).Split(',')).Contains(entityName))
                     return new HttpResponseMessage()
@@ -257,9 +262,12 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         StatusCode = HttpStatusCode.BadRequest
                     };
 
+                logger.LogEvent($"Download4 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 var sharePointLibraryName = $"{entityName}";
                 var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-", "")}";
+
+                logger.LogEvent($"Download5 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 // Authenticate against SPO with an App-Only access token
                 AuthenticationManager auth = new AuthenticationManager();
@@ -268,33 +276,56 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
 
+                    logger.LogEvent($"Download6 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+
                     var rootWeb = context.Web;
 
 
                     if (!String.IsNullOrEmpty(relativePath) )
                     {
+
+                        logger.LogEvent($"Download7 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+
                         context.Load(rootWeb);
+
+                        logger.LogEvent($"Download8 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+
                         await Task.Run(() => context.ExecuteQueryRetryAsync(2));
+
+                        logger.LogEvent($"Download9 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+
                         calculatedUrl = (rootWeb.ServerRelativeUrl.EndsWith("/") ? rootWeb.ServerRelativeUrl : rootWeb.ServerRelativeUrl + "/") +
                                                 $"{sharePointLibraryName}/{sharePointFolderName}{relativePath}";
+
+                        logger.LogEvent($"Download10 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
+
                         File file = rootWeb.GetFileByServerRelativeUrl(calculatedUrl);
                         var stream = file.OpenBinaryStream();
                         context.Load(file);
                         await Task.Run(() => context.ExecuteQueryRetryAsync(2));
 
-                       
+                        logger.LogEvent($"Download11 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
+
+
                         using (var reader = new StreamReader(stream.Value, Encoding.UTF8))
-                        {                                                        
+                        {
+                            logger.LogEvent($"Download12 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
                             string result = reader.ReadToEnd();
+                            
+
+                            logger.LogEvent($"Download13 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}|{result.Length}");
+
                             return new HttpResponseMessage()
                             {
                                 Content = new StringContent(result),
                                 StatusCode = HttpStatusCode.OK
                             };
+
+                           
                         }
                     }
 
-
+                    logger.LogEvent($"Download14 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
                     //Not Found
                     return new HttpResponseMessage()
                     {
@@ -307,6 +338,13 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             }
             catch (ServerException ex)
             {
+
+                logger.LogEvent($"Download15 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                logger.LogEvent($"Download16 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+
+                logger.LogEvent($"Download17 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}",
+                    new[] { ("Exception",$"{ex.Message}")});
+
                 Exception extendedException = new Exception($"Calculated URL:{calculatedUrl}:original Exception msg:{ex.Message}");
                  logger.LogException(extendedException);
                 
@@ -339,6 +377,13 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             }
             catch (Exception ex)
             {
+
+                logger.LogEvent($"Download18 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                logger.LogEvent($"Download19 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+
+                logger.LogEvent($"Download120 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}",
+                    new[] { ("Exception", $"{ex.Message}") });
+
                 Exception extendedException = new Exception($"Calculated URL:{calculatedUrl}:original Exception msg:{ex.Message}");
                 logger.LogException(extendedException);
 
