@@ -236,7 +236,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         {
             AppSettingsManager appSettings = new AppSettingsManager();
             LogOperations logger = new LogOperations(appSettings);
-
+            string calculatedUrl = ""; 
             try
             {
 
@@ -275,9 +275,9 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     {
                         context.Load(rootWeb);
                         await Task.Run(() => context.ExecuteQueryRetryAsync(2));
-                        File file = rootWeb.GetFileByServerRelativeUrl(
-                                                (rootWeb.ServerRelativeUrl.EndsWith("/") ? rootWeb.ServerRelativeUrl : rootWeb.ServerRelativeUrl + "/") +
-                                                $"{sharePointLibraryName}/{sharePointFolderName}{relativePath}");
+                        calculatedUrl = (rootWeb.ServerRelativeUrl.EndsWith("/") ? rootWeb.ServerRelativeUrl : rootWeb.ServerRelativeUrl + "/") +
+                                                $"{sharePointLibraryName}/{sharePointFolderName}{relativePath}";
+                        File file = rootWeb.GetFileByServerRelativeUrl(calculatedUrl);
                         var stream = file.OpenBinaryStream();
                         context.Load(file);
                         await Task.Run(() => context.ExecuteQueryRetryAsync(2));
@@ -307,6 +307,10 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             }
             catch (ServerException ex)
             {
+                Exception extendedException = new Exception($"Calculated URL:{calculatedUrl}:original Exception msg:{ex.Message}");
+                 logger.LogException(extendedException);
+                
+
                 if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
                 {
                     // no files found.
@@ -324,7 +328,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
                 else
                 {
-                    logger.LogException(ex);
+                  //  logger.LogException(ex);
                     return new HttpResponseMessage()
                     {
                         Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
@@ -335,7 +339,9 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogException(ex);
+                Exception extendedException = new Exception($"Calculated URL:{calculatedUrl}:original Exception msg:{ex.Message}");
+                logger.LogException(extendedException);
+
                 return new HttpResponseMessage()
                 {
                     Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
