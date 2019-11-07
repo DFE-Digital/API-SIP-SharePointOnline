@@ -23,6 +23,7 @@
   <Import Condition=" Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets') " Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets" />
   <!-- vertag<:>end -->
   <ItemGroup>
+    <Content Include="armsharepointapideploy.dr.parameters.json" />
     <Content Include="armsharepointapideploy.pr.parameters.json" />
     <Content Include="armsharepointapideploy.pp.parameters.json" />
     <Content Include="armsharepointapideploy.json" />
