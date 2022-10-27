@@ -53,3 +53,5 @@
 /DFE.SIP.API.SharePointOnline/webapisharepoint19.deploy.cmd
 /DFE.SIP.API.SharePointOnline/webapisharepoint19.deploy-readme.txt
 /DFE.SIP.API.SharePointOnline.Tests/bin/Debug
+/DFE.SIP.API.SharePointOnline.Arm/obj/Debug
+/DFE.SIP.API.SharePointOnline.Arm/bin/Debug/staging/DFE.SIP.API.SharePointOnline.Arm
