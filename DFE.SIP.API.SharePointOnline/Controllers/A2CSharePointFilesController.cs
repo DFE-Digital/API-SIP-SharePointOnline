@@ -4,22 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
-using OfficeDevPnP.Core;
-using System.Configuration;
 using Newtonsoft.Json.Linq;
 using Microsoft.SharePoint.Client;
 using System.IO;
 using File = Microsoft.SharePoint.Client.File;
 using System.Threading.Tasks;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
 using System.Net;
 using HttpDeleteAttribute = System.Web.Http.HttpDeleteAttribute;
-using AuthenticationManager = OfficeDevPnP.Core.AuthenticationManager;
+using AuthenticationManager = PnP.Framework.AuthenticationManager;
 using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
 using HttpPostAttribute = System.Web.Http.HttpPostAttribute;
-using System.Web.Mvc;
 using System.Text;
+using Microsoft.Identity.Client;
 
 namespace DFE.SIP.API.SharePointOnline.Controllers
 {
@@ -66,7 +62,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
                 // Authenticate against SPO with an App-Only access token
                 AuthenticationManager auth = new AuthenticationManager();
-                using (var context = auth.GetAppOnlyAuthenticatedContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
+                using (var context = auth.GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
                 appSettings.Get(appSettings.CLIENT_ID),
                 appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
@@ -156,7 +152,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
                 // Authenticate against SPO with an App-Only access token
                 AuthenticationManager auth = new AuthenticationManager();
-                using (var context = auth.GetAppOnlyAuthenticatedContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
+                using (var context = auth.GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
                 appSettings.Get(appSettings.CLIENT_ID),
                 appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
@@ -271,7 +267,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
                 // Authenticate against SPO with an App-Only access token
                 AuthenticationManager auth = new AuthenticationManager();
-                using (var context = auth.GetAppOnlyAuthenticatedContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
+                using (var context = auth.GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
                 appSettings.Get(appSettings.CLIENT_ID),
                 appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
@@ -458,7 +454,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
                 AuthenticationManager auth = new AuthenticationManager();
 
-                using (var context = auth.GetAppOnlyAuthenticatedContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
+                using (var context = auth.GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
                appSettings.Get(appSettings.CLIENT_ID),
                appSettings.Get(appSettings.CLIENT_SECRET)))
                 {

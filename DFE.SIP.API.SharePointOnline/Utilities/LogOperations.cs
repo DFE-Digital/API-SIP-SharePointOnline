@@ -47,9 +47,10 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
             //telemetryClient.TrackException(new Exception("API ShareOiunt app- COnstructor  "));
             //telemetryClient.Flush();
 
+            var config = new TelemetryConfiguration();
+            config.ConnectionString = $"InstrumentationKey={this.AppSettings.Get(this.AppSettings.APPINSIGHTS_KEY)}";
 
-            TelemetryConfiguration.Active.InstrumentationKey = this.AppSettings.Get(this.AppSettings.APPINSIGHTS_KEY);
-            telemetryClient = new TelemetryClient();
+            telemetryClient = new TelemetryClient(config);
             telemetryClient.Context.GlobalProperties.Add(InsightMetrics.Environment, this.AppSettings.Get(this.AppSettings.Environment));
             telemetryClient.Context.GlobalProperties.Add(InsightMetrics.Application, "SIP API SharePoint Online");
             telemetryClient.Context.GlobalProperties.Add(InsightMetrics.Function, "Api Request");
