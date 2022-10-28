@@ -15,7 +15,6 @@ using AuthenticationManager = PnP.Framework.AuthenticationManager;
 using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
 using HttpPostAttribute = System.Web.Http.HttpPostAttribute;
 using System.Text;
-using Microsoft.Identity.Client;
 
 namespace DFE.SIP.API.SharePointOnline.Controllers
 {
