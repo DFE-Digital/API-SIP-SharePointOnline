@@ -1,0 +1,9 @@
+namespace DFE.SIP.API.SharePointOnline.Areas.HelpPage.ModelDescriptions
+{
+    public class KeyValuePairModelDescription : ModelDescription
+    {
+        public ModelDescription KeyModelDescription { get; set; }
+
+        public ModelDescription ValueModelDescription { get; set; }
+    }
+}

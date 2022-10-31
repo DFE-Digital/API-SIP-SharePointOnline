@@ -28,9 +28,9 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
             try {
 
                 var identity = (ClaimsIdentity)actionContext.RequestContext.Principal.Identity;
-                var id = identity.Claims.Where(c => c.Type == "appid").FirstOrDefault().Value;
+                var id = identity.Claims.FirstOrDefault(c => c.Type == "appid")?.Value;
 
-                return ConfigurationManager.AppSettings["SPAuthorizedAppsIDs"].Contains(id); //              
+                return id != null && ConfigurationManager.AppSettings["SPAuthorizedAppsIDs"].Contains(id); //              
             }
             catch (Exception) {
                 return false;
