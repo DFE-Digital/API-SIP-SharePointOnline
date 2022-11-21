@@ -15,6 +15,7 @@ using AuthenticationManager = PnP.Framework.AuthenticationManager;
 using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
 using HttpPostAttribute = System.Web.Http.HttpPostAttribute;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace DFE.SIP.API.SharePointOnline.Controllers
 {
@@ -29,9 +30,8 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         [CustomAuthorize("SpContributor")]
         // DELETE api/values/5
         public async Task<HttpResponseMessage> Delete(string entityName, string recordName, string recordId, string fieldName, string fileName)
-        {
-            AppSettingsManager appSettings = new AppSettingsManager();
-            LogOperations logger = new LogOperations(appSettings);
+        { AppSettingsManager appSettings = new AppSettingsManager();
+           LogOperations logger = new LogOperations();
 
             try
             {
@@ -69,11 +69,11 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     var rootWeb = context.Web;
                     string fileNameToSearch = fieldName + filenameSeparator + fileName;
                     context.Load(rootWeb);
-                    await Task.Run(() => context.ExecuteQueryRetryAsync(2));
+                    await context.ExecuteQueryRetryAsync(2);
                     File fileFound = rootWeb.GetFileByServerRelativeUrl($"{rootWeb.ServerRelativeUrl}/{sharePointLibraryName}/{sharePointFolderName}/{fileNameToSearch}");                    
                     context.Load(fileFound);
                     fileFound.DeleteObject();
-                    await Task.Run(() => context.ExecuteQueryRetryAsync(2));
+                    await context.ExecuteQueryRetryAsync(2);
 
                     return new HttpResponseMessage()
                     {
@@ -97,7 +97,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     logger.LogException(ex);
                     return new HttpResponseMessage()
                     {
-                        Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                        Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                         StatusCode = HttpStatusCode.BadRequest
                     };
                     
@@ -109,7 +109,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 logger.LogException(ex);
                 return new HttpResponseMessage()
                 {
-                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                     StatusCode = HttpStatusCode.BadRequest
                 };
                 
@@ -123,10 +123,11 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         public async Task<HttpResponseMessage> Get(string entityName, string recordName, string recordId, string fieldName)
         {
             AppSettingsManager appSettings = new AppSettingsManager();
-            LogOperations logger = new LogOperations(appSettings);
+            LogOperations logger = new LogOperations();
 
             try
             {
+                logger.LogInformation($"Getting a file {entityName}|{recordName}|{recordId}|{fieldName}\"");
 
                 if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() &&
                       recordId.HasAValueThatIsNotAWhiteSpace() &&  fieldName.HasAValueThatIsNotAWhiteSpace()))
@@ -161,7 +162,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     Folder folderTarget = rootWeb.GetFolderByServerRelativeUrl($"{sharePointLibraryName}/{sharePointFolderName}");
                     FileCollection files = folderTarget.Files;
                     context.Load(files);
-                    await Task.Run(() => context.ExecuteQueryRetryAsync(2));
+                    await context.ExecuteQueryRetryAsync(2);
 
                     List<string> listFileNames = new List<string>();
                     string fieldNameMarker = fieldName + filenameSeparator;
@@ -204,7 +205,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     logger.LogException(ex);
                     return new HttpResponseMessage()
                     {
-                        Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                        Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                         StatusCode = HttpStatusCode.BadRequest
                     };
                     
@@ -215,7 +216,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 logger.LogException(ex);
                 return new HttpResponseMessage()
                 {
-                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                     StatusCode = HttpStatusCode.BadRequest
                 };                
 
@@ -230,14 +231,14 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         public async Task<HttpResponseMessage> Download(string entityName, string recordName, string recordId, string relativePath = null, string fieldName = null, string fileName = null)
         {
             AppSettingsManager appSettings = new AppSettingsManager();
-            LogOperations logger = new LogOperations(appSettings);
+            LogOperations logger = new LogOperations();
             string calculatedUrl = "";
 
-            logger.LogEvent($"Download1 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+            logger.LogInformation($"Download1 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
             try
             {
-                logger.LogEvent($"Download2 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                logger.LogInformation($"Download2 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() &&
                       recordId.HasAValueThatIsNotAWhiteSpace() ))
@@ -248,7 +249,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     };
 
 
-                logger.LogEvent($"Download3 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                logger.LogInformation($"Download3 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 if (!(appSettings.Get(appSettings.A2CEntitiesAllowedToCRUDFiles).Split(',')).Contains(entityName))
                     return new HttpResponseMessage()
@@ -257,12 +258,12 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         StatusCode = HttpStatusCode.BadRequest
                     };
 
-                logger.LogEvent($"Download4 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                logger.LogInformation($"Download4 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 var sharePointLibraryName = $"{entityName}";
                 var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-", "")}";
 
-                logger.LogEvent($"Download5 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                logger.LogInformation($"Download5 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 // Authenticate against SPO with an App-Only access token
                 AuthenticationManager auth = new AuthenticationManager();
@@ -271,7 +272,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
 
-                    logger.LogEvent($"Download6 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                    logger.LogInformation($"Download6 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                     var rootWeb = context.Web;
 
@@ -279,36 +280,36 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     if (!String.IsNullOrEmpty(relativePath) )
                     {
 
-                        logger.LogEvent($"Download7 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                        logger.LogInformation($"Download7 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                         context.Load(rootWeb);
 
-                        logger.LogEvent($"Download8 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                        logger.LogInformation($"Download8 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
-                        await Task.Run(() => context.ExecuteQueryRetryAsync(2));
+                        await context.ExecuteQueryRetryAsync(2);
 
-                        logger.LogEvent($"Download9 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                        logger.LogInformation($"Download9 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                         calculatedUrl = (rootWeb.ServerRelativeUrl.EndsWith("/") ? rootWeb.ServerRelativeUrl : rootWeb.ServerRelativeUrl + "/") +
                                                 $"{sharePointLibraryName}/{sharePointFolderName}{relativePath}";
 
-                        logger.LogEvent($"Download10 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
+                        logger.LogInformation($"Download10 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
 
                         File file = rootWeb.GetFileByServerRelativeUrl(calculatedUrl);
                         var stream = file.OpenBinaryStream();
                         context.Load(file);
-                        await Task.Run(() => context.ExecuteQueryRetryAsync(2));
+                        await context.ExecuteQueryRetryAsync(2);
 
-                        logger.LogEvent($"Download11 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
+                        logger.LogInformation($"Download11 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
 
 
                         using (var reader = new StreamReader(stream.Value, Encoding.UTF8))
                         {
-                            logger.LogEvent($"Download12 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
+                            logger.LogInformation($"Download12 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
                             string result = reader.ReadToEnd();
                             
 
-                            logger.LogEvent($"Download13 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}|{result.Length}");
+                            logger.LogInformation($"Download13 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}|{result.Length}");
 
                             return new HttpResponseMessage()
                             {
@@ -320,7 +321,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         }
                     }
 
-                    logger.LogEvent($"Download14 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                    logger.LogInformation($"Download14 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
                     //Not Found
                     return new HttpResponseMessage()
                     {
@@ -334,11 +335,11 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             catch (ServerException ex)
             {
 
-                logger.LogEvent($"Download15 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
-                logger.LogEvent($"Download16 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                //logger.LogInformation($"Download15 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                //logger.LogInformation($"Download16 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
-                logger.LogEvent($"Download17 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}",
-                    new[] { ("Exception",$"{ex.Message}")});
+                //logger.LogInformation($"Download17 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}",
+                //    new[] { ("Exception",$"{ex.Message}")});
 
                 Exception extendedException = new Exception($"Calculated URL:{calculatedUrl}:original Exception msg:{ex.Message}");
                  logger.LogException(extendedException);
@@ -348,7 +349,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 {
                     // no files found.
                     JObject result = new JObject();
-                    result.Add("Files", JToken.FromObject(new List<String>()));
+                    result.Add("Files", JToken.FromObject(new List<string>()));
 
                     return new HttpResponseMessage()
                     {
@@ -364,7 +365,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                   //  logger.LogException(ex);
                     return new HttpResponseMessage()
                     {
-                        Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                        Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                         StatusCode = HttpStatusCode.BadRequest
                     };
 
@@ -373,18 +374,18 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             catch (Exception ex)
             {
 
-                logger.LogEvent($"Download18 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
-                logger.LogEvent($"Download19 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                //logger.LogInformation($"Download18 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                //logger.LogInformation($"Download19 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
-                logger.LogEvent($"Download120 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}",
-                    new[] { ("Exception", $"{ex.Message}") });
+                //logger.LogInformation($"Download120 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}",
+                //    new[] { ("Exception", $"{ex.Message}") });
 
                 Exception extendedException = new Exception($"Calculated URL:{calculatedUrl}:original Exception msg:{ex.Message}");
                 logger.LogException(extendedException);
 
                 return new HttpResponseMessage()
                 {
-                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                     StatusCode = HttpStatusCode.BadRequest
                 };
 
@@ -404,7 +405,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             
 
             AppSettingsManager appSettings = new AppSettingsManager();
-            LogOperations logger = new LogOperations(appSettings);
+            LogOperations logger = new LogOperations();
 
             try
             {
@@ -464,11 +465,6 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                        SharePointOnlineUtilities.A2CConvertDynamicsEntityNameToListName(sharePointLibraryNameInURL),
                        context);
 
-
-
-                   // context.Load(folderTarget);
-                   // await Task.Run(() => context.ExecuteQueryRetryAsync(2));
-
                     FileCreationInformation newFile = new FileCreationInformation();
                     var bytes = Convert.FromBase64String(fileContentBase64);
 
@@ -480,7 +476,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     var itemRepresentationOFile = uploadRepresentationOfFile.ListItemAllFields;
                     itemRepresentationOFile.Update();
                     context.Load(itemRepresentationOFile);
-                    await Task.Run(() => context.ExecuteQueryRetryAsync(2));
+                    await context.ExecuteQueryRetryAsync(2);
 
 
                     return new HttpResponseMessage()
@@ -498,7 +494,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 logger.LogException(ex);
                 return new HttpResponseMessage()
                 {
-                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationID()}"),
+                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                     StatusCode = HttpStatusCode.BadRequest
                 };             
                                
