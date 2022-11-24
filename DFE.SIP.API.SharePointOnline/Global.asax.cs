@@ -21,7 +21,7 @@ namespace DFE.SIP.API.SharePointOnline
             {
                 // We store the DSN inside Web.config; make sure to use your own DSN!
                 o.Dsn = ConfigurationManager.AppSettings["SentryDSN"];
-                o.Environment = ConfigurationManager.AppSettings["Environment"];
+                o.Environment = ConfigurationManager.AppSettings["Environment"].ToLower();
                 o.SendDefaultPii = true;
                 o.AttachStacktrace = true;
                 o.TracesSampleRate = 1.0;
