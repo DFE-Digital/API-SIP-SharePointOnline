@@ -1,0 +1,6 @@
+environment                 = "development"
+project_name                = "myproject"
+azure_location              = "uksouth"
+tags                        = [
+  "Environment" = "Dev"
+]
