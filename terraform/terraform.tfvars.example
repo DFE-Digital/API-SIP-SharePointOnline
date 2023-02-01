@@ -1,6 +1,10 @@
 environment                 = "development"
 project_name                = "myproject"
 azure_location              = "uksouth"
+tfvars_filename             = dev.tfvars
+key_vault_access_users = [
+  "me_example.com#EXT#@example.onmicrosoft.com",
+]
 tags                        = [
   "Environment" = "Dev"
 ]
