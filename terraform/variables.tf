@@ -23,6 +23,76 @@ variable "key_vault_access_users" {
   type        = list(string)
 }
 
+variable "service_plan_sku" {
+  description = "Service plan sku"
+  type        = string
+}
+
+variable "service_dotnet_version" {
+  description = "Service dotnet version"
+  type        = string
+}
+
+variable "service_health_check_path" {
+  description = "Service health check path"
+  type        = string
+}
+
+variable "service_health_check_eviction_time_in_min" {
+  description = "The amount of time in minutes that a node can be unhealthy before being removed from the load balancer"
+  type        = number
+}
+
+variable "service_worker_count" {
+  description = "The number of Workers for the App Service"
+  type        = number
+}
+
+variable "virtual_network_address_space" {
+  description = "Virtual Network address space CIDR"
+  type        = string
+}
+
+variable "cdn_frontdoor_sku" {
+  description = "Azure CDN Front Door SKU"
+  type        = string
+}
+
+variable "cdn_frontdoor_health_probe_interval" {
+  description = "Specifies the number of seconds between health probes."
+  type        = number
+  default     = 30
+}
+
+variable "cdn_frontdoor_health_probe_path" {
+  description = "Specifies the path relative to the origin that is used to determine the health of the origin."
+  type        = string
+  default     = "/"
+}
+
+variable "cdn_frontdoor_response_timeout" {
+  description = "Azure CDN Front Door response timeout in seconds"
+  type        = number
+}
+
+variable "cdn_frontdoor_host_add_response_headers" {
+  description = "List of response headers to add at the CDN Front Door `[{ \"Name\" = \"Strict-Transport-Security\", \"value\" = \"max-age=31536000\" }]`"
+  type        = list(map(string))
+  default     = []
+}
+
+variable "cdn_frontdoor_remove_response_headers" {
+  description = "List of response headers to remove at the CDN Front Door"
+  type        = list(string)
+  default     = []
+}
+
+variable "cdn_frontdoor_host_redirects" {
+  description = "CDN FrontDoor host redirects `[{ \"from\" = \"example.com\", \"to\" = \"www.example.com\" }]`"
+  type        = list(map(string))
+  default     = []
+}
+
 variable "tags" {
   description = "Tags to be applied to all resources"
   type        = map(string)
