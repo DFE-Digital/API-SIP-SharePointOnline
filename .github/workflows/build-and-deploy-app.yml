@@ -94,11 +94,7 @@ jobs:
 
       - name: Build solution
         run: |
-          msbuild -p:Configuration=Release `
-            -p:DeployOnBuild=true `
-            -p:PackageAsSingleFile=true `
-            -p:WebPublishMethod=Package `
-            -p:SkipInvalidConfigurations=true
+          msbuild ./DFE.SIP.API.SharePointOnline.sln
 
       - name: Deploy app to Azure Web Apps
         uses: azure/webapps-deploy@v2
