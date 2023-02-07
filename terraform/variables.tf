@@ -48,6 +48,26 @@ variable "service_worker_count" {
   type        = number
 }
 
+variable "service_log_level" {
+  description = "Service log level"
+  type        = string
+}
+
+variable "service_log_retention" {
+  description = "Service log retention in days"
+  type        = number
+}
+
+variable "service_log_storage_sas_start" {
+  description = "Service log sas token start date/time"
+  type        = string
+}
+
+variable "service_log_storage_sas_expiry" {
+  description = "Service log sas token start date/time"
+  type        = string
+}
+
 variable "virtual_network_address_space" {
   description = "Virtual Network address space CIDR"
   type        = string

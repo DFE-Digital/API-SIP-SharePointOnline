@@ -42,5 +42,24 @@ resource "azurerm_windows_web_app" "default" {
     }
   }
 
+  logs {
+    application_logs {
+      azure_blob_storage {
+        level             = local.service_log_level
+        retention_in_days = local.service_log_retention
+        sas_url           = local.service_log_app_sas_url
+      }
+      file_system_level = local.service_log_level
+    }
+    http_logs {
+      azure_blob_storage {
+        retention_in_days = local.service_log_retention
+        sas_url           = local.service_log_http_sas_url
+      }
+    }
+    detailed_error_messages = true
+    failed_request_tracing  = true
+  }
+
   tags = local.tags
 }
