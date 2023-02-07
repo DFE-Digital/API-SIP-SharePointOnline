@@ -10,6 +10,13 @@ locals {
   service_health_check_path                 = var.service_health_check_path
   service_health_check_eviction_time_in_min = var.service_health_check_eviction_time_in_min
   service_worker_count                      = var.service_worker_count
+  service_log_level                         = var.service_log_level
+  service_log_retention                     = var.service_log_retention
+  service_log_storage_sas_start             = var.service_log_storage_sas_start
+  service_log_storage_sas_expiry            = var.service_log_storage_sas_expiry
+  service_log_types                         = toset(["app", "http"])
+  service_log_app_sas_url                   = "${azurerm_storage_account.logs.primary_blob_endpoint}${azurerm_storage_container.logs["app"].name}?${data.azurerm_storage_account_blob_container_sas.logs["app"].sas}"
+  service_log_http_sas_url                  = "${azurerm_storage_account.logs.primary_blob_endpoint}${azurerm_storage_container.logs["http"].name}?${data.azurerm_storage_account_blob_container_sas.logs["http"].sas}"
   virtual_network_address_space             = var.virtual_network_address_space
   virtual_network_address_space_mask        = element(split("/", local.virtual_network_address_space), 1)
   app_service_subnet_cidr                   = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 0)
