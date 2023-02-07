@@ -7,6 +7,7 @@ locals {
   key_vault_access_users                    = toset(var.key_vault_access_users)
   service_plan_sku                          = var.service_plan_sku
   service_dotnet_version                    = var.service_dotnet_version
+  service_app_settings                      = var.service_app_settings
   service_health_check_path                 = var.service_health_check_path
   service_health_check_eviction_time_in_min = var.service_health_check_eviction_time_in_min
   service_worker_count                      = var.service_worker_count
