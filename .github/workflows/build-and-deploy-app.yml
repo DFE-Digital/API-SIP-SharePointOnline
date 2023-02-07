@@ -1,0 +1,109 @@
+name: Deploy to environment
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+        description: "Choose an environment to deploy to"
+        required: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  set-env:
+    name: Determine environment
+    runs-on: ubuntu-22.04
+    outputs:
+      environment: ${{ steps.var.outputs.environment }}
+      branch: ${{ steps.var.outputs.branch }}
+      release: ${{ steps.var.outputs.release }}
+    steps:
+      - id: var
+        run: |
+          GIT_REF=${{ github.ref }}
+          GIT_BRANCH=${GIT_REF##*/}
+          INPUT=${{ github.event.inputs.environment }}
+          ENVIRONMENT=${INPUT:-"dev"}
+          RELEASE=${ENVIRONMENT,,}-`date +%Y-%m-%d`.${{ github.run_number }}
+          NUGET_VERSION="4.7"
+          echo "environment=${ENVIRONMENT,,}" >> $GITHUB_OUTPUT
+          echo "branch=$GIT_BRANCH" >> $GITHUB_OUTPUT
+          echo "release=${RELEASE}" >> $GITHUB_OUTPUT
+          echo "nuget_version=${NUGET_VERSION}" >> $GITHUB_OUTPUT
+
+  tag-and-release:
+    name: Tag and release
+    needs: set-env
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Create tag
+        run: |
+          git tag ${{ needs.set-env.outputs.release }}
+          git push origin ${{ needs.set-env.outputs.release }}
+
+      - name: Create release
+        uses: "actions/github-script@v6"
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          script: |
+            try {
+              await github.rest.repos.createRelease({
+                draft: ${{ needs.set-env.outputs.environment == 'Dev' }},
+                generate_release_notes: true,
+                name: "${{ needs.set-env.outputs.release }}",
+                owner: context.repo.owner,
+                prerelease: ${{ needs.set-env.outputs.environment == 'Dev' }},
+                repo: context.repo.repo,
+                tag_name: "${{ needs.set-env.outputs.release }}",
+              });
+            } catch (error) {
+              core.setFailed(error.message);
+            }
+
+  build-and-deploy-app:
+    name: Build and deploy app
+    needs:
+      - set-env
+      - tag-and-release
+    runs-on: windows-latest
+    environment: ${{ needs.set-env.outputs.environment }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Install Nuget
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-version: ${{ needs.set-env.outputs.nuget_version }}
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: NuGet restore
+        run: nuget restore DFE.SIP.API.SharePointOnline.sln
+
+      - name: Build solution
+        run: |
+          msbuild -p:Configuration=Release `
+            -p:DeployOnBuild=true `
+            -p:PackageAsSingleFile=true `
+            -p:WebPublishMethod=Package `
+            -p:SkipInvalidConfigurations=true `
+            -p:PackageLocation="build\\"
+
+      - name: Deploy app to Azure Web Apps
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}
+          package: 'build/'
