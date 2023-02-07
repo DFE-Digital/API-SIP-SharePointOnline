@@ -16,6 +16,7 @@ resource "azurerm_windows_web_app" "default" {
 
   virtual_network_subnet_id = azurerm_subnet.app_service_subnet.id
   https_only                = true
+  app_settings              = local.service_app_settings
 
   site_config {
     always_on                         = true

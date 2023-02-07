@@ -33,6 +33,11 @@ variable "service_dotnet_version" {
   type        = string
 }
 
+variable "service_app_settings" {
+  description = "Service app settings"
+  type        = map(string)
+}
+
 variable "service_health_check_path" {
   description = "Service health check path"
   type        = string

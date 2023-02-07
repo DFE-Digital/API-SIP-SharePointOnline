@@ -188,6 +188,7 @@ No modules.
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment name. Will be used along with `project_name` as a prefix for all resources. | `string` | n/a | yes |
 | <a name="input_key_vault_access_users"></a> [key\_vault\_access\_users](#input\_key\_vault\_access\_users) | List of users that require access to the Key Vault where tfvars are stored. This should be a list of User Principle Names (Found in Active Directory) that need to run terraform | `list(string)` | n/a | yes |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Project name. Will be used along with `environment` as a prefix for all resources. | `string` | n/a | yes |
+| <a name="input_service_app_settings"></a> [service\_app\_settings](#input\_service\_app\_settings) | Service app settings | `map(string)` | n/a | yes |
 | <a name="input_service_dotnet_version"></a> [service\_dotnet\_version](#input\_service\_dotnet\_version) | Service dotnet version | `string` | n/a | yes |
 | <a name="input_service_health_check_eviction_time_in_min"></a> [service\_health\_check\_eviction\_time\_in\_min](#input\_service\_health\_check\_eviction\_time\_in\_min) | The amount of time in minutes that a node can be unhealthy before being removed from the load balancer | `number` | n/a | yes |
 | <a name="input_service_health_check_path"></a> [service\_health\_check\_path](#input\_service\_health\_check\_path) | Service health check path | `string` | n/a | yes |
