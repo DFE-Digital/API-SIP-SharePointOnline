@@ -18,19 +18,27 @@ locals {
   service_log_types                         = toset(["app", "http"])
   service_log_app_sas_url                   = "${azurerm_storage_account.logs.primary_blob_endpoint}${azurerm_storage_container.logs["app"].name}${data.azurerm_storage_account_blob_container_sas.logs["app"].sas}"
   service_log_http_sas_url                  = "${azurerm_storage_account.logs.primary_blob_endpoint}${azurerm_storage_container.logs["http"].name}${data.azurerm_storage_account_blob_container_sas.logs["http"].sas}"
-  virtual_network_address_space             = var.virtual_network_address_space
-  virtual_network_address_space_mask        = element(split("/", local.virtual_network_address_space), 1)
-  app_service_subnet_cidr                   = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 0)
-  cdn_frontdoor_sku                         = var.cdn_frontdoor_sku
-  cdn_frontdoor_health_probe_interval       = var.cdn_frontdoor_health_probe_interval
-  cdn_frontdoor_health_probe_path           = var.cdn_frontdoor_health_probe_path
-  cdn_frontdoor_response_timeout            = var.cdn_frontdoor_response_timeout
-  cdn_frontdoor_host_redirects              = var.cdn_frontdoor_host_redirects
-  cdn_frontdoor_host_add_response_headers   = var.cdn_frontdoor_host_add_response_headers
-  cdn_frontdoor_remove_response_headers     = var.cdn_frontdoor_remove_response_headers
-  ruleset_redirects_id                      = length(local.cdn_frontdoor_host_redirects) > 0 ? [azurerm_cdn_frontdoor_rule_set.redirects[0].id] : []
-  ruleset_add_response_headers_id           = length(local.cdn_frontdoor_host_add_response_headers) > 0 ? [azurerm_cdn_frontdoor_rule_set.add_response_headers[0].id] : []
-  ruleset_remove_response_headers_id        = length(local.cdn_frontdoor_remove_response_headers) > 0 ? [azurerm_cdn_frontdoor_rule_set.remove_response_headers[0].id] : []
+  service_diagnostic_setting_types = toset([
+    "AppServiceHTTPLogs",
+    "AppServiceConsoleLogs",
+    "AppServiceAppLogs",
+    "AppServiceAuditLogs",
+    "AppServiceIPSecAuditLogs",
+    "AppServicePlatformLogs"
+  ])
+  virtual_network_address_space           = var.virtual_network_address_space
+  virtual_network_address_space_mask      = element(split("/", local.virtual_network_address_space), 1)
+  app_service_subnet_cidr                 = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 0)
+  cdn_frontdoor_sku                       = var.cdn_frontdoor_sku
+  cdn_frontdoor_health_probe_interval     = var.cdn_frontdoor_health_probe_interval
+  cdn_frontdoor_health_probe_path         = var.cdn_frontdoor_health_probe_path
+  cdn_frontdoor_response_timeout          = var.cdn_frontdoor_response_timeout
+  cdn_frontdoor_host_redirects            = var.cdn_frontdoor_host_redirects
+  cdn_frontdoor_host_add_response_headers = var.cdn_frontdoor_host_add_response_headers
+  cdn_frontdoor_remove_response_headers   = var.cdn_frontdoor_remove_response_headers
+  ruleset_redirects_id                    = length(local.cdn_frontdoor_host_redirects) > 0 ? [azurerm_cdn_frontdoor_rule_set.redirects[0].id] : []
+  ruleset_add_response_headers_id         = length(local.cdn_frontdoor_host_add_response_headers) > 0 ? [azurerm_cdn_frontdoor_rule_set.add_response_headers[0].id] : []
+  ruleset_remove_response_headers_id      = length(local.cdn_frontdoor_remove_response_headers) > 0 ? [azurerm_cdn_frontdoor_rule_set.remove_response_headers[0].id] : []
   ruleset_ids = concat(
     local.ruleset_redirects_id,
     local.ruleset_add_response_headers_id,
