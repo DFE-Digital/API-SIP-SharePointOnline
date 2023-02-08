@@ -37,7 +37,6 @@ resource "azurerm_windows_web_app" "default" {
         x_azure_fdid = [
           azurerm_cdn_frontdoor_profile.cdn.resource_guid
         ]
-        x_fd_health_probe = ["1"]
       }
       service_tag = "AzureFrontDoor.Backend"
     }
