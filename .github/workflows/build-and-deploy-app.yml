@@ -94,11 +94,15 @@ jobs:
 
       - name: Build solution
         run: |
-          msbuild ./DFE.SIP.API.SharePointOnline.sln
+          msbuild -p:Configuration=Release `
+            -p:DeployOnBuild=true `
+            -p:PackageAsSingleFile=false `
+            -p:WebPublishMethod=Package `
+            -p:SkipInvalidConfigurations=true
 
       - name: Deploy app to Azure Web Apps
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}
-          package: './DFE.SIP.API.SharePointOnline/'
+          package: './DFE.SIP.API.SharePointOnline/obj/Release/Package/'
