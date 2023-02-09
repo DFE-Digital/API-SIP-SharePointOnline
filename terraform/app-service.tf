@@ -18,10 +18,7 @@ resource "azurerm_windows_web_app" "default" {
   https_only                = true
   app_settings = merge(
     local.service_app_settings,
-    {
-      "APPINSIGHTS_INSTRUMENTATIONKEY"        = azurerm_application_insights.service_monitoring.instrumentation_key,
-      "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.service_monitoring.connection_string
-    }
+    local.service_app_insights_settings,
   )
 
   site_config {
@@ -65,6 +62,12 @@ resource "azurerm_windows_web_app" "default" {
     }
     detailed_error_messages = true
     failed_request_tracing  = true
+  }
+
+  lifecycle {
+    ignore_changes = [
+      sticky_settings,
+    ]
   }
 
   tags = local.tags
