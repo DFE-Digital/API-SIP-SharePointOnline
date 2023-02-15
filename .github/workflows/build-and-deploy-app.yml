@@ -68,9 +68,8 @@ jobs:
             } catch (error) {
               core.setFailed(error.message);
             }
-
-  build-and-deploy-app:
-    name: Build and deploy app
+  build-app:
+    name: Build app
     needs:
       - set-env
       - tag-and-release
@@ -100,6 +99,15 @@ jobs:
             -p:WebPublishMethod=Package `
             -p:SkipInvalidConfigurations=true
 
+  build-and-deploy-app:
+    name: Deploy to ${{ needs.set-env.outputs.environment }} (${{ needs.set-env.outputs.release }})
+    needs:
+      - set-env
+      - tag-and-release
+      - build-app
+    runs-on: windows-latest
+    environment: ${{ needs.set-env.outputs.environment }}
+    steps:
       - name: Deploy app to Azure Web Apps
         uses: azure/webapps-deploy@v2
         with:
