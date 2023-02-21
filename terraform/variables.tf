@@ -118,6 +118,24 @@ variable "cdn_frontdoor_host_redirects" {
   default     = []
 }
 
+variable "cdn_frontdoor_rate_limiting_duration_in_minutes" {
+  description = "CDN Front Door rate limiting duration in minutes"
+  type        = number
+  default     = 1
+}
+
+variable "cdn_frontdoor_rate_limiting_threshold" {
+  description = "Maximum number of concurrent requests before Rate Limiting policy is applied"
+  type        = number
+  default     = 300
+}
+
+variable "cdn_frontdoor_rate_limiting_bypass_ip_list" {
+  description = "List if IP CIDRs to bypass CDN Front Door rate limiting"
+  type        = list(string)
+  default     = []
+}
+
 variable "tags" {
   description = "Tags to be applied to all resources"
   type        = map(string)

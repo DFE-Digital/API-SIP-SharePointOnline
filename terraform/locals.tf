@@ -41,19 +41,22 @@ locals {
     "AppServiceIPSecAuditLogs",
     "AppServicePlatformLogs"
   ])
-  virtual_network_address_space           = var.virtual_network_address_space
-  virtual_network_address_space_mask      = element(split("/", local.virtual_network_address_space), 1)
-  app_service_subnet_cidr                 = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 0)
-  cdn_frontdoor_sku                       = var.cdn_frontdoor_sku
-  cdn_frontdoor_health_probe_interval     = var.cdn_frontdoor_health_probe_interval
-  cdn_frontdoor_health_probe_path         = var.cdn_frontdoor_health_probe_path
-  cdn_frontdoor_response_timeout          = var.cdn_frontdoor_response_timeout
-  cdn_frontdoor_host_redirects            = var.cdn_frontdoor_host_redirects
-  cdn_frontdoor_host_add_response_headers = var.cdn_frontdoor_host_add_response_headers
-  cdn_frontdoor_remove_response_headers   = var.cdn_frontdoor_remove_response_headers
-  ruleset_redirects_id                    = length(local.cdn_frontdoor_host_redirects) > 0 ? [azurerm_cdn_frontdoor_rule_set.redirects[0].id] : []
-  ruleset_add_response_headers_id         = length(local.cdn_frontdoor_host_add_response_headers) > 0 ? [azurerm_cdn_frontdoor_rule_set.add_response_headers[0].id] : []
-  ruleset_remove_response_headers_id      = length(local.cdn_frontdoor_remove_response_headers) > 0 ? [azurerm_cdn_frontdoor_rule_set.remove_response_headers[0].id] : []
+  virtual_network_address_space                   = var.virtual_network_address_space
+  virtual_network_address_space_mask              = element(split("/", local.virtual_network_address_space), 1)
+  app_service_subnet_cidr                         = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 0)
+  cdn_frontdoor_sku                               = var.cdn_frontdoor_sku
+  cdn_frontdoor_health_probe_interval             = var.cdn_frontdoor_health_probe_interval
+  cdn_frontdoor_health_probe_path                 = var.cdn_frontdoor_health_probe_path
+  cdn_frontdoor_response_timeout                  = var.cdn_frontdoor_response_timeout
+  cdn_frontdoor_host_redirects                    = var.cdn_frontdoor_host_redirects
+  cdn_frontdoor_host_add_response_headers         = var.cdn_frontdoor_host_add_response_headers
+  cdn_frontdoor_remove_response_headers           = var.cdn_frontdoor_remove_response_headers
+  cdn_frontdoor_rate_limiting_duration_in_minutes = var.cdn_frontdoor_rate_limiting_duration_in_minutes
+  cdn_frontdoor_rate_limiting_threshold           = var.cdn_frontdoor_rate_limiting_threshold
+  cdn_frontdoor_rate_limiting_bypass_ip_list      = var.cdn_frontdoor_rate_limiting_bypass_ip_list
+  ruleset_redirects_id                            = length(local.cdn_frontdoor_host_redirects) > 0 ? [azurerm_cdn_frontdoor_rule_set.redirects[0].id] : []
+  ruleset_add_response_headers_id                 = length(local.cdn_frontdoor_host_add_response_headers) > 0 ? [azurerm_cdn_frontdoor_rule_set.add_response_headers[0].id] : []
+  ruleset_remove_response_headers_id              = length(local.cdn_frontdoor_remove_response_headers) > 0 ? [azurerm_cdn_frontdoor_rule_set.remove_response_headers[0].id] : []
   ruleset_ids = concat(
     local.ruleset_redirects_id,
     local.ruleset_add_response_headers_id,
