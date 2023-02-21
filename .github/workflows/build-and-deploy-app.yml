@@ -68,6 +68,7 @@ jobs:
             } catch (error) {
               core.setFailed(error.message);
             }
+
   build-app:
     name: Build app
     needs:
@@ -99,7 +100,13 @@ jobs:
             -p:WebPublishMethod=Package `
             -p:SkipInvalidConfigurations=true
 
-  build-and-deploy-app:
+      - name: Upload artifact
+      - uses: actions/upload-artifact@master
+        with:
+          name: package
+          path: './DFE.SIP.API.SharePointOnline/obj/Release/Package/PackageTmp/'
+
+  deploy-app:
     name: Deploy to ${{ needs.set-env.outputs.environment }} (${{ needs.set-env.outputs.release }})
     needs:
       - set-env
@@ -108,9 +115,15 @@ jobs:
     runs-on: windows-latest
     environment: ${{ needs.set-env.outputs.environment }}
     steps:
+      - name: Download package
+        uses: actions/download-artifact@master
+        with:
+          name: package
+          path: './package'
+
       - name: Deploy app to Azure Web Apps
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}
-          package: './DFE.SIP.API.SharePointOnline/obj/Release/Package/PackageTmp/'
+          package: './package'
