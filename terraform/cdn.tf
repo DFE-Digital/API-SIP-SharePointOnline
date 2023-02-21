@@ -138,3 +138,62 @@ resource "azurerm_cdn_frontdoor_rule" "remove_response_header" {
     }
   }
 }
+
+resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
+  name                              = "${replace(local.resource_prefix, "-", "")}waf"
+  resource_group_name               = azurerm_resource_group.default.name
+  sku_name                          = azurerm_cdn_frontdoor_profile.cdn.sku_name
+  enabled                           = true
+  mode                              = "Prevention"
+  custom_block_response_status_code = 403
+  custom_block_response_body        = filebase64("${path.module}/html/waf-response.html")
+
+  custom_rule {
+    name                           = "RateLimiting"
+    enabled                        = true
+    priority                       = 1
+    rate_limit_duration_in_minutes = local.cdn_frontdoor_rate_limiting_duration_in_minutes
+    rate_limit_threshold           = local.cdn_frontdoor_rate_limiting_threshold
+    type                           = "RateLimitRule"
+    action                         = "Block"
+
+    dynamic "match_condition" {
+      for_each = length(local.cdn_frontdoor_rate_limiting_bypass_ip_list) > 0 ? [0] : []
+
+      content {
+        match_variable     = "RemoteAddr"
+        operator           = "IPMatch"
+        negation_condition = true
+        match_values       = local.cdn_frontdoor_rate_limiting_bypass_ip_list
+      }
+    }
+
+    match_condition {
+      match_variable     = "RequestUri"
+      operator           = "RegEx"
+      negation_condition = false
+      match_values       = ["/.*"]
+    }
+  }
+
+  tags = local.tags
+}
+
+resource "azurerm_cdn_frontdoor_security_policy" "waf" {
+  name                     = "${replace(local.resource_prefix, "-", "")}wafsecuritypolicy"
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
+
+  security_policies {
+    firewall {
+      cdn_frontdoor_firewall_policy_id = azurerm_cdn_frontdoor_firewall_policy.waf.id
+
+      association {
+        patterns_to_match = ["/*"]
+
+        domain {
+          cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.endpoint.id
+        }
+      }
+    }
+  }
+}
