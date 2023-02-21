@@ -100,8 +100,8 @@ jobs:
             -p:WebPublishMethod=Package `
             -p:SkipInvalidConfigurations=true
 
-      - name: Upload artifact
-      - uses: actions/upload-artifact@master
+      - name: Upload package
+        uses: actions/upload-artifact@master
         with:
           name: package
           path: './DFE.SIP.API.SharePointOnline/obj/Release/Package/PackageTmp/'
