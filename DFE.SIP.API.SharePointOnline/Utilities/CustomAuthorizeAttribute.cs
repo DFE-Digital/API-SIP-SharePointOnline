@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Results;
+using Microsoft.Graph;
 
 namespace DFE.SIP.API.SharePointOnline.Utilities
 {
@@ -33,6 +34,11 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
 
                 var identity = (ClaimsIdentity)actionContext.RequestContext.Principal.Identity;
                 var id = identity.Claims.FirstOrDefault(c => c.Type == "appid")?.Value;
+
+                foreach (var claim in identity.Claims)
+                {
+                    logger.LogEvent($"Authorizing user claim, type: {claim.Type}, value: {claim.Value} ");
+                }
 
                 var spAuthorizedAppIds = ConfigurationManager.AppSettings["SPAuthorizedAppsIDs"];
 
