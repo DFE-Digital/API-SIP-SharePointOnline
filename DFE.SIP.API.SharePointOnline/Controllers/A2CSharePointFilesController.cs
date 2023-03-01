@@ -31,7 +31,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         // DELETE api/values/5
         public async Task<HttpResponseMessage> Delete(string entityName, string recordName, string recordId, string fieldName, string fileName)
         { AppSettingsManager appSettings = new AppSettingsManager();
-           LogOperations logger = new LogOperations();
+           LogOperations logger = new LogOperations(appSettings);
 
             try
             {
@@ -123,11 +123,11 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         public async Task<HttpResponseMessage> Get(string entityName, string recordName, string recordId, string fieldName)
         {
             AppSettingsManager appSettings = new AppSettingsManager();
-            LogOperations logger = new LogOperations();
+            LogOperations logger = new LogOperations(appSettings);
 
             try
             {
-                logger.LogInformation($"Getting a file {entityName}|{recordName}|{recordId}|{fieldName}\"");
+                logger.LogEvent($"Getting a file {entityName}|{recordName}|{recordId}|{fieldName}\"");
 
                 if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() &&
                       recordId.HasAValueThatIsNotAWhiteSpace() &&  fieldName.HasAValueThatIsNotAWhiteSpace()))
@@ -231,14 +231,14 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         public async Task<HttpResponseMessage> Download(string entityName, string recordName, string recordId, string relativePath = null, string fieldName = null, string fileName = null)
         {
             AppSettingsManager appSettings = new AppSettingsManager();
-            LogOperations logger = new LogOperations();
+            LogOperations logger = new LogOperations(appSettings);
             string calculatedUrl = "";
 
-            logger.LogInformation($"Download1 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+            logger.LogEvent($"Download1 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
             try
             {
-                logger.LogInformation($"Download2 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                logger.LogEvent($"Download2 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() &&
                       recordId.HasAValueThatIsNotAWhiteSpace() ))
@@ -249,7 +249,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     };
 
 
-                logger.LogInformation($"Download3 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                logger.LogEvent($"Download3 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 if (!(appSettings.Get(appSettings.A2CEntitiesAllowedToCRUDFiles).Split(',')).Contains(entityName))
                     return new HttpResponseMessage()
@@ -258,12 +258,12 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         StatusCode = HttpStatusCode.BadRequest
                     };
 
-                logger.LogInformation($"Download4 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                logger.LogEvent($"Download4 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 var sharePointLibraryName = $"{entityName}";
                 var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-", "")}";
 
-                logger.LogInformation($"Download5 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                logger.LogEvent($"Download5 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 // Authenticate against SPO with an App-Only access token
                 AuthenticationManager auth = new AuthenticationManager();
@@ -272,7 +272,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
 
-                    logger.LogInformation($"Download6 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                    logger.LogEvent($"Download6 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                     var rootWeb = context.Web;
 
@@ -280,36 +280,36 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     if (!String.IsNullOrEmpty(relativePath) )
                     {
 
-                        logger.LogInformation($"Download7 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                        logger.LogEvent($"Download7 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                         context.Load(rootWeb);
 
-                        logger.LogInformation($"Download8 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                        logger.LogEvent($"Download8 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                         await context.ExecuteQueryRetryAsync(2);
 
-                        logger.LogInformation($"Download9 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                        logger.LogEvent($"Download9 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                         calculatedUrl = (rootWeb.ServerRelativeUrl.EndsWith("/") ? rootWeb.ServerRelativeUrl : rootWeb.ServerRelativeUrl + "/") +
                                                 $"{sharePointLibraryName}/{sharePointFolderName}{relativePath}";
 
-                        logger.LogInformation($"Download10 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
+                        logger.LogEvent($"Download10 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
 
                         File file = rootWeb.GetFileByServerRelativeUrl(calculatedUrl);
                         var stream = file.OpenBinaryStream();
                         context.Load(file);
                         await context.ExecuteQueryRetryAsync(2);
 
-                        logger.LogInformation($"Download11 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
+                        logger.LogEvent($"Download11 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
 
 
                         using (var reader = new StreamReader(stream.Value, Encoding.UTF8))
                         {
-                            logger.LogInformation($"Download12 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
+                            logger.LogEvent($"Download12 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
                             string result = reader.ReadToEnd();
                             
 
-                            logger.LogInformation($"Download13 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}|{result.Length}");
+                            logger.LogEvent($"Download13 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}|{result.Length}");
 
                             return new HttpResponseMessage()
                             {
@@ -321,7 +321,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         }
                     }
 
-                    logger.LogInformation($"Download14 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
+                    logger.LogEvent($"Download14 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
                     //Not Found
                     return new HttpResponseMessage()
                     {
@@ -405,7 +405,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             
 
             AppSettingsManager appSettings = new AppSettingsManager();
-            LogOperations logger = new LogOperations();
+            LogOperations logger = new LogOperations(appSettings);
 
             try
             {

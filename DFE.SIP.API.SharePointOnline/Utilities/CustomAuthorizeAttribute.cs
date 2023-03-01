@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.SharePoint.Client.RecordsRepository;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Security.Claims;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using System.Web.Http.Results;
 
 namespace DFE.SIP.API.SharePointOnline.Utilities
 {
@@ -23,12 +25,19 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
 
         protected override bool IsAuthorized(HttpActionContext actionContext)
         {
-
+            AppSettingsManager appSettings = new AppSettingsManager();
+            LogOperations logger = new LogOperations(appSettings);
 
             try {
+                logger.LogEvent($"Authorizing user");
 
                 var identity = (ClaimsIdentity)actionContext.RequestContext.Principal.Identity;
                 var id = identity.Claims.FirstOrDefault(c => c.Type == "appid")?.Value;
+
+                var spAuthorizedAppIds = ConfigurationManager.AppSettings["SPAuthorizedAppsIDs"];
+
+                logger.LogEvent($"Authorizing user, appid: {id}");
+                logger.LogEvent($"Authorizing against configuration SPAuthorizedAppsIDs: {spAuthorizedAppIds}");
 
                 return id != null && ConfigurationManager.AppSettings["SPAuthorizedAppsIDs"].Contains(id); //              
             }
