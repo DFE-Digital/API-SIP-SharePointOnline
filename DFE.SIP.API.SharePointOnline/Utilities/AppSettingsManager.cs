@@ -17,7 +17,7 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
         public readonly string CLIENT_ID = "CLIENT_ID";
         public readonly string CLIENT_SECRET = "CLIENT_SECRET";
         public readonly string SharePointSiteCollectionUrl = "SharePointSiteCollectionUrl";
-        public readonly string APPINSIGHTS_KEY = "APPINSIGHTS_KEY";
+        public readonly string APPINSIGHTS_KEY = "APPINSIGHTS_INSTRUMENTATIONKEY";
         public readonly string Environment = "Environment";
         public readonly string A2CEntitiesAllowedToCRUDFiles = "A2CEntitiesAllowedToCRUDFiles";
         public readonly string BuildVersion = "BuildVersion";
