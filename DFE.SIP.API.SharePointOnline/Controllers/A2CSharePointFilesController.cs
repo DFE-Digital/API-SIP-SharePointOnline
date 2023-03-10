@@ -16,6 +16,9 @@ using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
 using HttpPostAttribute = System.Web.Http.HttpPostAttribute;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Microsoft.SharePoint.Client.RecordsRepository;
+using System.Web.Razor.Text;
+using CamlBuilder;
 
 namespace DFE.SIP.API.SharePointOnline.Controllers
 {
@@ -30,8 +33,9 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         [CustomAuthorize("SpContributor")]
         // DELETE api/values/5
         public async Task<HttpResponseMessage> Delete(string entityName, string recordName, string recordId, string fieldName, string fileName)
-        { AppSettingsManager appSettings = new AppSettingsManager();
-           LogOperations logger = new LogOperations(appSettings);
+        {
+            AppSettingsManager appSettings = new AppSettingsManager();
+            LogOperations logger = new LogOperations(appSettings);
 
             try
             {
@@ -44,16 +48,16 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         StatusCode = HttpStatusCode.BadRequest
                     };
 
-   
 
 
-                if(! (appSettings.Get(appSettings.A2CEntitiesAllowedToCRUDFiles).Split(',')).Contains(entityName))
+
+                if (!(appSettings.Get(appSettings.A2CEntitiesAllowedToCRUDFiles).Split(',')).Contains(entityName))
                     return new HttpResponseMessage()
                     {
                         Content = new StringContent($"EntityName {entityName} not allowed because it is now present in A2CEntitiesAllowedToCRUDFiles appsettings "),
                         StatusCode = HttpStatusCode.BadRequest
                     };
-                
+
 
 
                 var sharePointLibraryName = $"{entityName}";
@@ -70,7 +74,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     string fileNameToSearch = fieldName + filenameSeparator + fileName;
                     context.Load(rootWeb);
                     await context.ExecuteQueryRetryAsync(2);
-                    File fileFound = rootWeb.GetFileByServerRelativeUrl($"{rootWeb.ServerRelativeUrl}/{sharePointLibraryName}/{sharePointFolderName}/{fileNameToSearch}");                    
+                    File fileFound = rootWeb.GetFileByServerRelativeUrl($"{rootWeb.ServerRelativeUrl}/{sharePointLibraryName}/{sharePointFolderName}/{fileNameToSearch}");
                     context.Load(fileFound);
                     fileFound.DeleteObject();
                     await context.ExecuteQueryRetryAsync(2);
@@ -100,8 +104,8 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                         StatusCode = HttpStatusCode.BadRequest
                     };
-                    
-                    
+
+
                 }
             }
             catch (Exception ex)
@@ -112,7 +116,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                     StatusCode = HttpStatusCode.BadRequest
                 };
-                
+
             }
         }
 
@@ -130,14 +134,14 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 logger.LogEvent($"Getting a file {entityName}|{recordName}|{recordId}|{fieldName}\"");
 
                 if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() &&
-                      recordId.HasAValueThatIsNotAWhiteSpace() &&  fieldName.HasAValueThatIsNotAWhiteSpace()))
+                      recordId.HasAValueThatIsNotAWhiteSpace() && fieldName.HasAValueThatIsNotAWhiteSpace()))
                     return new HttpResponseMessage()
                     {
                         Content = new StringContent($"Bad Format in Request parameters expected values for entity,recordName,recordId,fieldName :{entityName},{recordName},{recordId},{fieldName}"),
                         StatusCode = HttpStatusCode.BadRequest
                     };
 
-                
+
 
                 if (!(appSettings.Get(appSettings.A2CEntitiesAllowedToCRUDFiles).Split(',')).Contains(entityName))
                     return new HttpResponseMessage()
@@ -146,7 +150,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         StatusCode = HttpStatusCode.BadRequest
                     };
 
-                
+
                 var sharePointLibraryName = $"{entityName}";
                 var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-", "")}";
 
@@ -186,7 +190,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
             catch (ServerException ex)
             {
                 if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
-                {                    
+                {
                     // no files found.
                     JObject result = new JObject();
                     result.Add("Files", JToken.FromObject(new List<String>()));
@@ -197,9 +201,9 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         StatusCode = HttpStatusCode.OK
                     };
 
-                    
+
                 }
-                    
+
                 else
                 {
                     logger.LogException(ex);
@@ -208,7 +212,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                         StatusCode = HttpStatusCode.BadRequest
                     };
-                    
+
                 }
             }
             catch (Exception ex)
@@ -218,7 +222,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 {
                     Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                     StatusCode = HttpStatusCode.BadRequest
-                };                
+                };
 
             }
         }
@@ -227,6 +231,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
         [HttpGet]
         [CustomAuthorize("SpContributor")]
+        [Route("api/A2CSharePointFiles/download")]
         // GET: api/SharePointFiles
         public async Task<HttpResponseMessage> Download(string entityName, string recordName, string recordId, string relativePath = null, string fieldName = null, string fileName = null)
         {
@@ -241,7 +246,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 logger.LogEvent($"Download2 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 if (!(entityName.HasAValueThatIsNotAWhiteSpace() && recordName.HasAValueThatIsNotAWhiteSpace() &&
-                      recordId.HasAValueThatIsNotAWhiteSpace() ))
+                      recordId.HasAValueThatIsNotAWhiteSpace()))
                     return new HttpResponseMessage()
                     {
                         Content = new StringContent($"Bad Format in Request parameters expected values for entity,recordName,recordId,fieldName :{entityName},{recordName},{recordId},{fieldName}"),
@@ -277,7 +282,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     var rootWeb = context.Web;
 
 
-                    if (!String.IsNullOrEmpty(relativePath) )
+                    if (!String.IsNullOrEmpty(relativePath))
                     {
 
                         logger.LogEvent($"Download7 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
@@ -307,7 +312,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         {
                             logger.LogEvent($"Download12 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}");
                             string result = reader.ReadToEnd();
-                            
+
 
                             logger.LogEvent($"Download13 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}|{calculatedUrl}|{result.Length}");
 
@@ -317,7 +322,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                                 StatusCode = HttpStatusCode.OK
                             };
 
-                           
+
                         }
                     }
 
@@ -342,8 +347,8 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 //    new[] { ("Exception",$"{ex.Message}")});
 
                 Exception extendedException = new Exception($"Calculated URL:{calculatedUrl}:original Exception msg:{ex.Message}");
-                 logger.LogException(extendedException);
-                
+                logger.LogException(extendedException);
+
 
                 if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
                 {
@@ -362,7 +367,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
                 else
                 {
-                  //  logger.LogException(ex);
+                    //  logger.LogException(ex);
                     return new HttpResponseMessage()
                     {
                         Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
@@ -399,17 +404,15 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         // POST: api/SharePointFiles
         [CustomAuthorize("SpContributor")]
         [HttpPost]
-        public async Task<HttpResponseMessage> Post([FromBody]string value)
+        public async Task<HttpResponseMessage> Post([FromBody] string value)
         {
-
-            
 
             AppSettingsManager appSettings = new AppSettingsManager();
             LogOperations logger = new LogOperations(appSettings);
 
             try
             {
-                
+
                 if (!value.HasAValueThatIsNotAWhiteSpace())
                     return new HttpResponseMessage()
                     {
@@ -445,11 +448,11 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         StatusCode = HttpStatusCode.BadRequest
                     };
                 }
-             
+
                 var sharePointLibraryNameInURL = $"{entityName}"; // ListName is actually diferent and SharePointOnlineUtilities.A2CConvertDynamicsEntityNameToListName is used to get its value.
-                var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-","")}";
+                var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-", "")}";
                 var sharePointFileName = $"{fieldName}{filenameSeparator}{fileName}";
-                               
+
 
 
                 AuthenticationManager auth = new AuthenticationManager();
@@ -459,9 +462,9 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
 
-                   // var rootWeb = context.Web;
-                    
-                    Folder folderTarget = await SharePointOnlineUtilities.ensureFolderExistsAsync($"{sharePointLibraryNameInURL}/{sharePointFolderName}",sharePointFolderName,
+                    // var rootWeb = context.Web;
+
+                    Folder folderTarget = await SharePointOnlineUtilities.ensureFolderExistsAsync($"{sharePointLibraryNameInURL}/{sharePointFolderName}", sharePointFolderName,
                        SharePointOnlineUtilities.A2CConvertDynamicsEntityNameToListName(sharePointLibraryNameInURL),
                        context);
 
@@ -484,10 +487,10 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                         Content = new StringContent(fileName),
                         StatusCode = HttpStatusCode.OK
                     };
-                    
-                  
+
+
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -496,15 +499,105 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 {
                     Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
                     StatusCode = HttpStatusCode.BadRequest
-                };             
-                               
+                };
+
             }
 
 
         }
 
-      
 
+        [HttpPut]
+        [CustomAuthorize("SpContributor")]
+        [Route("api/A2CSharePointFiles/utils/fix-applying-school")]
+        // GET: api/SharePointFiles
+        public async Task<HttpResponseMessage> FixApplyingSchool(string appReference, Guid applyingSchoolId)
+        {
+            AppSettingsManager appSettings = new AppSettingsManager();
+            LogOperations logger = new LogOperations(appSettings);
+
+            try
+            {
+                appReference.ValidateNotNullOrEmpty(nameof(appReference));
+                applyingSchoolId.ValidateNotNullOrEmpty(nameof(applyingSchoolId));
+
+                logger.LogEvent($"Fixing applying school files, Application Reference: {appReference} | Applying School Id {applyingSchoolId}");
+
+                var sharePointLibraryName = $"sip_applyingschools";
+
+                // Authenticate against SPO with an App-Only access token
+                AuthenticationManager auth = new AuthenticationManager();
+                using (var context = auth.GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
+                appSettings.Get(appSettings.CLIENT_ID),
+                appSettings.Get(appSettings.CLIENT_SECRET)))
+                {
+                    var rootWeb = context.Web;
+                    context.Load(rootWeb);
+                    await context.ExecuteQueryRetryAsync(2);
+
+                    Folder applyingSchoolsFolder = rootWeb.GetFolderByServerRelativeUrl(sharePointLibraryName);
+
+                    context.Load(applyingSchoolsFolder.Folders);
+                    await context.ExecuteQueryRetryAsync(2);
+
+                    var schooldFolderIdentifier = $"{applyingSchoolId.ToString().ToUpper().Replace("-", "")}";
+
+                    List<Folder> schoolToFixFolders = applyingSchoolsFolder.Folders.Where(x => x.Name.EndsWith(schooldFolderIdentifier)).ToList();
+
+                    Folder schoolCopyFromFolder = schoolToFixFolders.SingleOrDefault (x => x.Name.ToLower().StartsWith("sip_applyingschoolses"));
+
+                    if (schoolCopyFromFolder == null) {
+                        return new HttpResponseMessage()
+                        {
+                            Content = new StringContent($"A folder starting with 'sip_applyingschoolses' for Application Reference: {appReference} | Applying School Id {applyingSchoolId} was not found."),
+                            StatusCode = HttpStatusCode.BadRequest
+                        };
+                    }
+
+                    logger.LogEvent($"Bad folder found, '{schoolCopyFromFolder.Name}' for Applying School Id {applyingSchoolId}");
+
+                    // Create the folder name that the school docs should be in
+                    var sharePointFolderName = $"{appReference.ToUpper()}_{schooldFolderIdentifier}";
+
+                    // Get it if it exists else create it
+                    Folder schoolCopyToFolder = await SharePointOnlineUtilities.ensureFolderExistsAsync(sharePointLibraryName + $"/{sharePointFolderName}", sharePointFolderName,
+                                                                                                   SharePointOnlineUtilities.A2CConvertDynamicsEntityNameToListName(sharePointLibraryName),
+                                                                                                   context);
+                    FileCollection files = schoolCopyFromFolder.Files;
+                    context.Load(files);
+                    await context.ExecuteQueryRetryAsync(2);
+
+                    logger.LogEvent($"Copying files from '{schoolCopyFromFolder.Name}' to '{schoolCopyToFolder.Name}' for Applying School Id {applyingSchoolId}");
+
+                    foreach (var file in files)
+                    {
+                        context.Load(file);
+                        file.CopyTo($"{schoolCopyToFolder.ServerRelativeUrl}/{file.Name}", true);
+                        await context.ExecuteQueryRetryAsync(2);
+                        logger.LogEvent($"Copied '{file.Name}' files from '{schoolCopyFromFolder.Name}' to '{schoolCopyToFolder.Name}' for Applying School Id {applyingSchoolId}");
+                    }
+                }
+
+                logger.LogEvent($"Completed fixing applying school files, Application Reference: {appReference} | Applying School Id {applyingSchoolId}");
+
+                return new HttpResponseMessage()
+                {
+                    StatusCode = HttpStatusCode.OK
+                };
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
+                    StatusCode = HttpStatusCode.BadRequest
+                };
+            }
+
+            
+        }
 
 
     }
