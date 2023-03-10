@@ -18,6 +18,7 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.SharePoint.Client.RecordsRepository;
 using System.Web.Razor.Text;
+using CamlBuilder;
 
 namespace DFE.SIP.API.SharePointOnline.Controllers
 {
@@ -508,18 +509,21 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
 
         [HttpPut]
         [CustomAuthorize("SpContributor")]
-        [Route("api/utils/fix-applying-school")]
+        [Route("api/A2CSharePointFiles/utils/fix-applying-school")]
         // GET: api/SharePointFiles
-        public async Task<HttpResponseMessage> FixApplyingSchool(string appReference, string applyingSchoolId)
+        public async Task<HttpResponseMessage> FixApplyingSchool(string appReference, Guid applyingSchoolId)
         {
             AppSettingsManager appSettings = new AppSettingsManager();
             LogOperations logger = new LogOperations(appSettings);
 
             try
             {
+                appReference.ValidateNotNullOrEmpty(nameof(appReference));
+                applyingSchoolId.ValidateNotNullOrEmpty(nameof(applyingSchoolId));
+
+                logger.LogEvent($"Fixing applying school files, Application Reference: {appReference} | Applying School Id {applyingSchoolId}");
 
                 var sharePointLibraryName = $"sip_applyingschools";
-
 
                 // Authenticate against SPO with an App-Only access token
                 AuthenticationManager auth = new AuthenticationManager();
@@ -527,56 +531,72 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 appSettings.Get(appSettings.CLIENT_ID),
                 appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
-
-                    //Folder applyingSchoolsFolder = await SharePointOnlineUtilities.ensureFolderExistsAsync($"{sharePointLibraryNameInURL}", sharePointLibraryNameInURL,
-                    //   SharePointOnlineUtilities.A2CConvertDynamicsEntityNameToListName(sharePointLibraryNameInURL),
-                    //   context);
-
-
                     var rootWeb = context.Web;
                     context.Load(rootWeb);
                     await context.ExecuteQueryRetryAsync(2);
-
-                    var calculatedUrl = (rootWeb.ServerRelativeUrl.EndsWith("/") ? rootWeb.ServerRelativeUrl : rootWeb.ServerRelativeUrl + "/") +
-                                                sharePointLibraryName;
 
                     Folder applyingSchoolsFolder = rootWeb.GetFolderByServerRelativeUrl(sharePointLibraryName);
 
                     context.Load(applyingSchoolsFolder.Folders);
                     await context.ExecuteQueryRetryAsync(2);
 
-                    List<Folder> schoolToFixFolders = applyingSchoolsFolder.Folders.Where(x => x.Name.EndsWith(applyingSchoolId)).ToList();
+                    var schooldFolderIdentifier = $"{applyingSchoolId.ToString().ToUpper().Replace("-", "")}";
 
-                    Folder schoolCopyFromFolder = schoolToFixFolders.Where(x => x.Name.ToLower().StartsWith("sip_applyingschoolses")).SingleOrDefault();
+                    List<Folder> schoolToFixFolders = applyingSchoolsFolder.Folders.Where(x => x.Name.EndsWith(schooldFolderIdentifier)).ToList();
 
-                    var sharePointFolderName = $"{appReference}_{applyingSchoolId}";
+                    Folder schoolCopyFromFolder = schoolToFixFolders.SingleOrDefault (x => x.Name.ToLower().StartsWith("sip_applyingschoolses"));
 
-                    Folder folderTarget = await SharePointOnlineUtilities.ensureFolderExistsAsync(sharePointLibraryName + $"/{sharePointFolderName}", sharePointFolderName,
+                    if (schoolCopyFromFolder == null) {
+                        return new HttpResponseMessage()
+                        {
+                            Content = new StringContent($"A folder starting with 'sip_applyingschoolses' for Application Reference: {appReference} | Applying School Id {applyingSchoolId} was not found."),
+                            StatusCode = HttpStatusCode.BadRequest
+                        };
+                    }
+
+                    logger.LogEvent($"Bad folder found, '{schoolCopyFromFolder.Name}' for Applying School Id {applyingSchoolId}");
+
+                    // Create the folder name that the school docs should be in
+                    var sharePointFolderName = $"{appReference.ToUpper()}_{schooldFolderIdentifier}";
+
+                    // Get it if it exists else create it
+                    Folder schoolCopyToFolder = await SharePointOnlineUtilities.ensureFolderExistsAsync(sharePointLibraryName + $"/{sharePointFolderName}", sharePointFolderName,
                                                                                                    SharePointOnlineUtilities.A2CConvertDynamicsEntityNameToListName(sharePointLibraryName),
                                                                                                    context);
                     FileCollection files = schoolCopyFromFolder.Files;
                     context.Load(files);
                     await context.ExecuteQueryRetryAsync(2);
 
+                    logger.LogEvent($"Copying files from '{schoolCopyFromFolder.Name}' to '{schoolCopyToFolder.Name}' for Applying School Id {applyingSchoolId}");
+
                     foreach (var file in files)
                     {
                         context.Load(file);
-                        file.CopyTo($"{folderTarget.ServerRelativeUrl}/{file.Name}", true);
+                        file.CopyTo($"{schoolCopyToFolder.ServerRelativeUrl}/{file.Name}", true);
                         await context.ExecuteQueryRetryAsync(2);
+                        logger.LogEvent($"Copied '{file.Name}' files from '{schoolCopyFromFolder.Name}' to '{schoolCopyToFolder.Name}' for Applying School Id {applyingSchoolId}");
                     }
                 }
 
+                logger.LogEvent($"Completed fixing applying school files, Application Reference: {appReference} | Applying School Id {applyingSchoolId}");
+
+                return new HttpResponseMessage()
+                {
+                    StatusCode = HttpStatusCode.OK
+                };
 
             }
             catch (Exception ex)
             {
                 logger.LogException(ex);
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent($"Error CorrelationID: {logger.GetCorrelationId()}"),
+                    StatusCode = HttpStatusCode.BadRequest
+                };
             }
 
-            return new HttpResponseMessage()
-            {
-                StatusCode = HttpStatusCode.OK
-            };
+            
         }
 
 
