@@ -7,7 +7,7 @@ module "azurerm_key_vault" {
   azure_location                        = local.azure_location
   key_vault_access_users                = local.key_vault_access_users
   tfvars_filename                       = local.tfvars_filename
-  diagnostic_log_analytics_workspace_id = null
-  diagnostic_eventhub_name              = null
+  diagnostic_log_analytics_workspace_id = azurerm_log_analytics_workspace.service_monitoring.id
+  diagnostic_storage_account_id         = azurerm_storage_account.logs.id
   tags                                  = local.tags
 }
