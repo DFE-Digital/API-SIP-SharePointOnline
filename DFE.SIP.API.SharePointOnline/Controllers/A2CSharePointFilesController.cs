@@ -562,15 +562,21 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                     // Get it if it exists else create it
                     Folder schoolCopyToFolder = await SharePointOnlineUtilities.ensureFolderExistsAsync(sharePointLibraryName + $"/{sharePointFolderName}", sharePointFolderName,
                                                                                                    SharePointOnlineUtilities.A2CConvertDynamicsEntityNameToListName(sharePointLibraryName),
-                                                                                                   context);
-                    FileCollection files = schoolCopyFromFolder.Files;
-                    context.Load(files);
+                                                                                                  context);
+                    FileCollection sourceFiles = schoolCopyFromFolder.Files;
+                    context.Load(sourceFiles);
+                    await context.ExecuteQueryRetryAsync(2);
+
+                    FileCollection destinationFiles = schoolCopyToFolder.Files;
+                    context.Load(destinationFiles);
                     await context.ExecuteQueryRetryAsync(2);
 
                     logger.LogEvent($"Copying files from '{schoolCopyFromFolder.Name}' to '{schoolCopyToFolder.Name}' for Applying School Id {applyingSchoolId}");
 
-                    foreach (var file in files)
+                    foreach (var file in sourceFiles)
                     {
+                        var fileExists = destinationFiles.Any(x => x.Name == file.Name);
+                        if (fileExists) { continue; }
                         context.Load(file);
                         file.CopyTo($"{schoolCopyToFolder.ServerRelativeUrl}/{file.Name}", true);
                         await context.ExecuteQueryRetryAsync(2);
