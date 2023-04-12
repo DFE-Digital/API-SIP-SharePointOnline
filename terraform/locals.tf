@@ -41,6 +41,10 @@ locals {
   ])
   enable_monitoring                               = var.enable_monitoring
   monitor_endpoint_healthcheck                    = var.monitor_endpoint_healthcheck
+  monitor_email_receivers                         = var.monitor_email_receivers
+  monitor_enable_slack_webhook                    = var.monitor_enable_slack_webhook
+  monitor_slack_webhook_receiver                  = var.monitor_slack_webhook_receiver
+  monitor_slack_channel                           = var.monitor_slack_channel
   virtual_network_address_space                   = var.virtual_network_address_space
   virtual_network_address_space_mask              = element(split("/", local.virtual_network_address_space), 1)
   app_service_subnet_cidr                         = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 0)
