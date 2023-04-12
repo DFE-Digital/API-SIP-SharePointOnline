@@ -103,6 +103,12 @@ variable "enable_cdn_frontdoor" {
   type        = bool
 }
 
+variable "cdn_frontdoor_origin_fqdn_override" {
+  description = "Manually specify the hostname that the CDN Front Door should target. Defaults to the App Service hostname"
+  type        = string
+  default     = ""
+}
+
 variable "cdn_frontdoor_sku" {
   description = "Azure CDN Front Door SKU"
   type        = string
