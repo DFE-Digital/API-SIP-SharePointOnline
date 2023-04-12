@@ -1,5 +1,5 @@
 module "azure_web_app_services_hosting" {
-  source = "github.com/DFE-Digital/terraform-azurerm-web-app-services-hosting?ref=v0.1.1"
+  source = "github.com/DFE-Digital/terraform-azurerm-web-app-services-hosting?ref=v0.1.2"
 
   environment    = local.environment
   project_name   = local.project_name
@@ -27,4 +27,5 @@ module "azure_web_app_services_hosting" {
   cdn_frontdoor_host_add_response_headers      = local.cdn_frontdoor_host_add_response_headers
   cdn_frontdoor_remove_response_headers        = local.cdn_frontdoor_remove_response_headers
   cdn_frontdoor_enable_rate_limiting           = local.cdn_frontdoor_enable_rate_limiting
+  cdn_frontdoor_origin_fqdn_override           = local.cdn_frontdoor_origin_fqdn_override
 }

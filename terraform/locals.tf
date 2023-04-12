@@ -56,6 +56,7 @@ locals {
   cdn_frontdoor_rate_limiting_duration_in_minutes = var.cdn_frontdoor_rate_limiting_duration_in_minutes
   cdn_frontdoor_rate_limiting_threshold           = var.cdn_frontdoor_rate_limiting_threshold
   cdn_frontdoor_rate_limiting_bypass_ip_list      = var.cdn_frontdoor_rate_limiting_bypass_ip_list
+  cdn_frontdoor_origin_fqdn_override              = var.cdn_frontdoor_origin_fqdn_override
   restrict_web_app_service_to_cdn_inbound_only    = var.restrict_web_app_service_to_cdn_inbound_only
   tags                                            = var.tags
 }
