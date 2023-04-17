@@ -17,8 +17,12 @@ module "azure_web_app_services_hosting" {
   service_log_storage_sas_start  = local.service_log_storage_sas_start
   service_log_storage_sas_expiry = local.service_log_storage_sas_expiry
 
-  enable_monitoring            = local.enable_monitoring
-  monitor_endpoint_healthcheck = local.monitor_endpoint_healthcheck
+  enable_monitoring              = local.enable_monitoring
+  monitor_endpoint_healthcheck   = local.monitor_endpoint_healthcheck
+  monitor_email_receivers        = local.monitor_email_receivers
+  monitor_enable_slack_webhook   = local.monitor_enable_slack_webhook
+  monitor_slack_webhook_receiver = local.monitor_slack_webhook_receiver
+  monitor_slack_channel          = local.monitor_slack_channel
 
   enable_cdn_frontdoor                         = local.enable_cdn_frontdoor
   restrict_web_app_service_to_cdn_inbound_only = local.restrict_web_app_service_to_cdn_inbound_only
