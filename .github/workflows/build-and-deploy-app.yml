@@ -105,6 +105,7 @@ jobs:
         with:
           name: package
           path: './DFE.SIP.API.SharePointOnline/obj/Release/Package/PackageTmp/'
+          retention-days: 1
 
   deploy-app:
     name: Deploy to ${{ needs.set-env.outputs.environment }} (${{ needs.set-env.outputs.release }})
