@@ -58,18 +58,8 @@ variable "service_health_check_path" {
   type        = string
 }
 
-variable "service_health_check_eviction_time_in_min" {
-  description = "The amount of time in minutes that a node can be unhealthy before being removed from the load balancer"
-  type        = number
-}
-
 variable "service_worker_count" {
   description = "The number of Workers for the App Service"
-  type        = number
-}
-
-variable "service_log_retention" {
-  description = "Service log retention in days"
   type        = number
 }
 
@@ -184,12 +174,6 @@ variable "cdn_frontdoor_rate_limiting_threshold" {
   description = "Maximum number of concurrent requests before Rate Limiting policy is applied"
   type        = number
   default     = 300
-}
-
-variable "cdn_frontdoor_rate_limiting_bypass_ip_list" {
-  description = "List if IP CIDRs to bypass CDN Front Door rate limiting"
-  type        = list(string)
-  default     = []
 }
 
 variable "restrict_web_app_service_to_cdn_inbound_only" {
