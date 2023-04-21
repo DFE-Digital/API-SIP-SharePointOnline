@@ -490,6 +490,7 @@
     <Compile Include="Utilities\LogOperations.cs" />
     <Compile Include="Utilities\SharePointOnlineUtilities.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />
+    <Compile Include="Utilities\TelemetryFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
