@@ -23,13 +23,28 @@ variable "key_vault_access_users" {
   type        = list(string)
 }
 
+variable "launch_in_vnet" {
+  description = "Conditionally launch into a VNet"
+  type        = bool
+}
+
 variable "service_plan_sku" {
   description = "Service plan sku"
   type        = string
 }
 
-variable "service_dotnet_version" {
-  description = "Service dotnet version"
+variable "service_plan_os" {
+  description = "Service plan operating system. Valid values are `Windows` or `Linux`."
+  type        = string
+}
+
+variable "service_stack" {
+  description = "The application stack for the web app. Valid values are `dotnet`, `dotnetcore`, `node`, `python`, `php`, `java`, `ruby` or `go`."
+  type        = string
+}
+
+variable "service_stack_version" {
+  description = "Service stack version"
   type        = string
 }
 
@@ -43,23 +58,8 @@ variable "service_health_check_path" {
   type        = string
 }
 
-variable "service_health_check_eviction_time_in_min" {
-  description = "The amount of time in minutes that a node can be unhealthy before being removed from the load balancer"
-  type        = number
-}
-
 variable "service_worker_count" {
   description = "The number of Workers for the App Service"
-  type        = number
-}
-
-variable "service_log_level" {
-  description = "Service log level"
-  type        = string
-}
-
-variable "service_log_retention" {
-  description = "Service log retention in days"
   type        = number
 }
 
@@ -73,9 +73,50 @@ variable "service_log_storage_sas_expiry" {
   type        = string
 }
 
+variable "enable_monitoring" {
+  description = "Create an App Insights instance and notification group for the Web App Service"
+  type        = bool
+}
+
+variable "monitor_email_receivers" {
+  description = "A list of email addresses that should be notified by monitoring alerts"
+  type        = list(string)
+}
+
+variable "monitor_enable_slack_webhook" {
+  description = "Enable slack webhooks to send monitoring notifications to a channel"
+  type        = bool
+}
+
+variable "monitor_slack_webhook_receiver" {
+  description = "A Slack App webhook URL"
+  type        = string
+}
+
+variable "monitor_slack_channel" {
+  description = "Slack channel name/id to send messages to"
+  type        = string
+}
+
+variable "monitor_endpoint_healthcheck" {
+  description = "Specify a route that should be monitored for a 200 OK status"
+  type        = string
+}
+
 variable "virtual_network_address_space" {
   description = "Virtual Network address space CIDR"
   type        = string
+}
+
+variable "enable_cdn_frontdoor" {
+  description = "Enable Azure CDN Front Door. This will use the Web App default hostname as the origin."
+  type        = bool
+}
+
+variable "cdn_frontdoor_origin_fqdn_override" {
+  description = "Manually specify the hostname that the CDN Front Door should target. Defaults to the App Service hostname"
+  type        = string
+  default     = ""
 }
 
 variable "cdn_frontdoor_sku" {
@@ -118,6 +159,11 @@ variable "cdn_frontdoor_host_redirects" {
   default     = []
 }
 
+variable "cdn_frontdoor_enable_rate_limiting" {
+  description = "CDN Front Door enable rate limiting"
+  type        = bool
+}
+
 variable "cdn_frontdoor_rate_limiting_duration_in_minutes" {
   description = "CDN Front Door rate limiting duration in minutes"
   type        = number
@@ -130,10 +176,9 @@ variable "cdn_frontdoor_rate_limiting_threshold" {
   default     = 300
 }
 
-variable "cdn_frontdoor_rate_limiting_bypass_ip_list" {
-  description = "List if IP CIDRs to bypass CDN Front Door rate limiting"
-  type        = list(string)
-  default     = []
+variable "restrict_web_app_service_to_cdn_inbound_only" {
+  description = "Restricts access to the Web App by addin an ip restriction rule which only allows 'AzureFrontDoor.Backend' inbound and matches the cdn fdid header. It also creates a network security group that only allows 'AzureFrontDoor.Backend' inbound, and attaches it to the subnet of the web app."
+  type        = bool
 }
 
 variable "tags" {
