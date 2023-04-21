@@ -1,6 +1,7 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.IdentityModel.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
 
     public class LogOperations
     {
-        private TelemetryClient telemetryClient;
+        private readonly TelemetryClient telemetryClient;
         private StringBuilder logTrail = new StringBuilder();
         private const string FUNCTION = "Function";
         private AppSettingsManager AppSettings;
@@ -35,38 +36,9 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
 
         public LogOperations(AppSettingsManager AppSettings)
         {
-
             this.AppSettings = AppSettings;
 
-
-
-            //TelemetryConfiguration.Active.InstrumentationKey = "701cb5ad-8a37-49b3-ad10-ea1c66fb9dac";
-
-            //var telemetryClient = new TelemetryClient();
-            //telemetryClient.TrackTrace("ConsoleShareOiunt  app- Trace Test COnstructor");
-            //telemetryClient.TrackException(new Exception("API ShareOiunt app- COnstructor  "));
-            //telemetryClient.Flush();
-
-            var config = new TelemetryConfiguration();
-            config.ConnectionString = $"InstrumentationKey={this.AppSettings.Get(this.AppSettings.APPINSIGHTS_KEY)}";
-
-            telemetryClient = new TelemetryClient(config);
-            telemetryClient.Context.GlobalProperties.Add(InsightMetrics.Environment, this.AppSettings.Get(this.AppSettings.Environment));
-            telemetryClient.Context.GlobalProperties.Add(InsightMetrics.Application, "SIP API SharePoint Online");
-            telemetryClient.Context.GlobalProperties.Add(InsightMetrics.Function, "Api Request");
-            telemetryClient.Context.GlobalProperties.Add(InsightMetrics.CorrelationId, Guid.NewGuid().ToString());
-
-            //  _telemetry.TrackException(new Exception("Test Exception"));
-            //  _telemetry.TrackTrace("Hello World4 - from SP Api!");
-            //  _telemetry.Flush();
-
-
-
-            //TelemetryConfiguration.Active.InstrumentationKey = "701cb5ad-8a37-49b3-ad10-ea1c66fb9dac";
-            ////TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = true;
-            //var _telemetry = new TelemetryClient();
-            //_telemetry.TrackTrace("Hello World5!");
-            //_telemetry.Flush();
+            telemetryClient = TelemetryFactory.GetTelemetryClient(this.AppSettings);
 
 
 #if DEBUG
