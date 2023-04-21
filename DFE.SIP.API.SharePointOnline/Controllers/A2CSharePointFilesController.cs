@@ -64,8 +64,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-", "")}";
 
                 // Authenticate against SPO with an App-Only access token
-                AuthenticationManager auth = new AuthenticationManager();
-                using (var context = auth.GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
+                using (var context = new AuthenticationManager().GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
                 appSettings.Get(appSettings.CLIENT_ID),
                 appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
@@ -155,8 +154,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-", "")}";
 
                 // Authenticate against SPO with an App-Only access token
-                AuthenticationManager auth = new AuthenticationManager();
-                using (var context = auth.GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
+                using (var context = new AuthenticationManager().GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
                 appSettings.Get(appSettings.CLIENT_ID),
                 appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
@@ -271,8 +269,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 logger.LogEvent($"Download5 {entityName}|{recordName}|{recordId}|{relativePath}|{fileName}");
 
                 // Authenticate against SPO with an App-Only access token
-                AuthenticationManager auth = new AuthenticationManager();
-                using (var context = auth.GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
+                using (var context = new AuthenticationManager().GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
                 appSettings.Get(appSettings.CLIENT_ID),
                 appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
@@ -453,11 +450,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 var sharePointFolderName = $"{recordName.ToUpper()}_{recordId.ToUpper().Replace("-", "")}";
                 var sharePointFileName = $"{fieldName}{filenameSeparator}{fileName}";
 
-
-
-                AuthenticationManager auth = new AuthenticationManager();
-
-                using (var context = auth.GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
+               using (var context = new AuthenticationManager().GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
                appSettings.Get(appSettings.CLIENT_ID),
                appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
@@ -526,8 +519,7 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
                 var sharePointLibraryName = $"sip_applyingschools";
 
                 // Authenticate against SPO with an App-Only access token
-                AuthenticationManager auth = new AuthenticationManager();
-                using (var context = auth.GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
+                using (var context = new AuthenticationManager().GetACSAppOnlyContext(appSettings.Get(appSettings.SharePointSiteCollectionUrl),
                 appSettings.Get(appSettings.CLIENT_ID),
                 appSettings.Get(appSettings.CLIENT_SECRET)))
                 {
