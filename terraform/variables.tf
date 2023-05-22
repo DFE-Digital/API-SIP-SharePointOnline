@@ -23,6 +23,11 @@ variable "key_vault_access_users" {
   type        = list(string)
 }
 
+variable "key_vault_access_ipv4" {
+  description = "List of IPv4 Addresses that are permitted to access the Key Vault"
+  type        = list(string)
+}
+
 variable "launch_in_vnet" {
   description = "Conditionally launch into a VNet"
   type        = bool
