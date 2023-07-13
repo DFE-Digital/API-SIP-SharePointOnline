@@ -4,6 +4,7 @@ locals {
   azure_location                                  = var.azure_location
   tfvars_filename                                 = var.tfvars_filename
   key_vault_access_users                          = toset(var.key_vault_access_users)
+  key_vault_access_ipv4                           = var.key_vault_access_ipv4
   launch_in_vnet                                  = var.launch_in_vnet
   service_plan_sku                                = var.service_plan_sku
   service_plan_os                                 = var.service_plan_os
