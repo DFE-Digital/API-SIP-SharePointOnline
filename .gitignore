@@ -102,5 +102,10 @@ backend.vars
 /Brewfile.lock.json
 /terraform/Brewfile.lock.json
 
+<<<<<<< HEAD
 ## Mac OS Finder System files
 **/.DS_Store
+=======
+# Mac OS System Files
+.DS_Store
+>>>>>>> 3939b11 (Added .DS_Store (Mac OS Filesystem files from git) to .gitignore)
