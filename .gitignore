@@ -1,3 +1,106 @@
-﻿
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/DFE.SIP.API.SharePointOnline/bin
+/DFE.SIP.API.SharePointOnline/obj
+/DFE.SIP.API.SharePointOnline/package.zip
+/DFE.SIP.API.SharePointOnline/webapisharepoint6.SourceManifest.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint6.SetParameters.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint6.deploy.cmd
+/DFE.SIP.API.SharePointOnline/webapisharepoint6.deploy-readme.txt
+/DFE.SIP.API.SharePointOnline/webapisharepoint5.SourceManifest.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint5.SetParameters.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint5.deploy.cmd
+/DFE.SIP.API.SharePointOnline/webapisharepoint5.deploy-readme.txt
+/DFE.SIP.API.SharePointOnline/webapisharepoint4.SourceManifest.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint4.SetParameters.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint4.deploy.cmd
+/DFE.SIP.API.SharePointOnline/webapisharepoint4.deploy-readme.txt
+/DFE.SIP.API.SharePointOnline/webapisharepoint3.SourceManifest.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint3.SetParameters.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint3.deploy.cmd
+/DFE.SIP.API.SharePointOnline/webapisharepoint3.deploy-readme.txt
+/DFE.SIP.API.SharePointOnline/webapisharepoint2.SourceManifest.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint2.SetParameters.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint2.deploy.cmd
+/DFE.SIP.API.SharePointOnline/webapisharepoint2.deploy-readme.txt
+/DFE.SIP.API.SharePointOnline/webapisharepoint1.SourceManifest.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint1.SetParameters.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint1.deploy.cmd
+/DFE.SIP.API.SharePointOnline/webapisharepoint1.deploy-readme.txt
+/DFE.SIP.API.SharePointOnline.Tests/obj
+/packages
+/DFE.SIP.API.SharePointOnline/webapisharepoint14.SourceManifest.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint14.SetParameters.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint14.deploy.cmd
+/DFE.SIP.API.SharePointOnline/webapisharepoint14.deploy-readme.txt
+/DFE.SIP.API.SharePointOnline/webapisharepoint13.SourceManifest.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint13.SetParameters.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint13.deploy.cmd
+/DFE.SIP.API.SharePointOnline/webapisharepoint13.deploy-readme.txt
+/DFE.SIP.API.SharePointOnline/webapisharepoint18.SourceManifest.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint18.SetParameters.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint18.deploy.cmd
+/DFE.SIP.API.SharePointOnline/webapisharepoint18.deploy-readme.txt
+/DFE.SIP.API.SharePointOnline/webapisharepoint20.SourceManifest.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint20.SetParameters.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint20.deploy.cmd
+/DFE.SIP.API.SharePointOnline/webapisharepoint20.deploy-readme.txt
+/DFE.SIP.API.SharePointOnline/webapisharepoint19.SourceManifest.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint19.SetParameters.xml
+/DFE.SIP.API.SharePointOnline/webapisharepoint19.deploy.cmd
+/DFE.SIP.API.SharePointOnline/webapisharepoint19.deploy-readme.txt
+/DFE.SIP.API.SharePointOnline.Tests/bin/Debug
+/DFE.SIP.API.SharePointOnline.Arm/obj/Debug
+/DFE.SIP.API.SharePointOnline.Arm/bin/Debug/staging/DFE.SIP.API.SharePointOnline.Arm
+
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+
+# Exclude all .tfvars files, which are likely to contain sentitive data, such as
+# password, private keys, and other secrets. These should not be part of version
+# control as they are data points which are potentially sensitive and subject
+# to change depending on the environment.
+#
+*terraform.tfvars
+
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Include override files you do wish to add to version control using negated pattern
+#
+# !example_override.tf
+
+# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
+# example: *tfplan*
+
+# Ignore CLI configuration files
+.terraformrc
+.terraformrc*
+terraform.rc
+terraform.rc*
+*.tfstate*
+*.tfvars*
+!terraform.tfvars.example
+.terraform/
+backend.vars
+
+## Dependencies
+/Brewfile.lock.json
+/terraform/Brewfile.lock.json
+
 ## Mac OS Finder System files
 **/.DS_Store
