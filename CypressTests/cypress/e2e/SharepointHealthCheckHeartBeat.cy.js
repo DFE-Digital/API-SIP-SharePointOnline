@@ -2,7 +2,7 @@
 
 describe('Sharepoint API Testing', () => {
 
-      let url = Cypress.config('url')
+      let url = Cypress.env('url')
       let healthCheckEndpoint = '/api/HealthInternalStatusOnly'
 
 
