@@ -104,3 +104,6 @@ backend.vars
 
 ## Mac OS Finder System files
 **/.DS_Store
+
+## LOCAL CYPRESS ENVIRONMENT VARIABLES
+*.env
