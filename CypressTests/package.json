@@ -1,0 +1,18 @@
+{
+  "name": "SharePoint API Tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cy:run": "cypress run --env url=$url",
+    "cy:open": "cypress open",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cypress": "^12.12.0",
+    "dotenv": "^16.3.1"
+  }
+}

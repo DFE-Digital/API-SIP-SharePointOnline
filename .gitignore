@@ -101,3 +101,9 @@ backend.vars
 ## Dependencies
 /Brewfile.lock.json
 /terraform/Brewfile.lock.json
+
+## Mac OS Finder System files
+**/.DS_Store
+
+## LOCAL CYPRESS ENVIRONMENT VARIABLES
+*.env
