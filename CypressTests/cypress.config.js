@@ -9,5 +9,6 @@ module.exports = defineConfig({
   },
   env: {
     url: process.env.url,
+    video: false
   },
 });
