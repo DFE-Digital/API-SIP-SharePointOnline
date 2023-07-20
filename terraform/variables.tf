@@ -188,6 +188,24 @@ variable "tags" {
   type        = map(string)
 }
 
+variable "enable_event_hub" {
+  description = "Send App Service logs to an Event Hub sink"
+  type        = bool
+  default     = false
+}
+
+variable "enable_logstash_consumer" {
+  description = "Create an Event Hub consumer group for Logstash"
+  type        = bool
+  default     = false
+}
+
+variable "eventhub_export_log_analytics_table_names" {
+  description = "List of Log Analytics table names that you want to export to Event Hub. See https://learn.microsoft.com/en-gb/azure/azure-monitor/logs/logs-data-export?tabs=portal#supported-tables for a list of supported tables"
+  type        = list(string)
+  default     = []
+}
+
 variable "service_log_ipv4_allow_list" {
   description = "IPv4 addresses that are authorised to modify the Log storage account"
   type        = list(string)
