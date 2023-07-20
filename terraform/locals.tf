@@ -15,6 +15,7 @@ locals {
   service_worker_count                            = var.service_worker_count
   service_log_storage_sas_start                   = var.service_log_storage_sas_start
   service_log_storage_sas_expiry                  = var.service_log_storage_sas_expiry
+  service_log_ipv4_allow_list                     = var.service_log_ipv4_allow_list
   enable_monitoring                               = var.enable_monitoring
   monitor_endpoint_healthcheck                    = var.monitor_endpoint_healthcheck
   monitor_email_receivers                         = var.monitor_email_receivers
@@ -33,5 +34,8 @@ locals {
   cdn_frontdoor_rate_limiting_threshold           = var.cdn_frontdoor_rate_limiting_threshold
   cdn_frontdoor_origin_fqdn_override              = var.cdn_frontdoor_origin_fqdn_override
   restrict_web_app_service_to_cdn_inbound_only    = var.restrict_web_app_service_to_cdn_inbound_only
+  enable_event_hub                                = var.enable_event_hub
+  enable_logstash_consumer                        = var.enable_logstash_consumer
+  eventhub_export_log_analytics_table_names       = var.eventhub_export_log_analytics_table_names
   tags                                            = var.tags
 }

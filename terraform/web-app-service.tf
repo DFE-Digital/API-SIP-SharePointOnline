@@ -1,5 +1,5 @@
 module "azure_web_app_services_hosting" {
-  source = "github.com/DFE-Digital/terraform-azurerm-web-app-services-hosting?ref=v0.1.3"
+  source = "github.com/DFE-Digital/terraform-azurerm-web-app-services-hosting?ref=v0.2.0"
 
   environment    = local.environment
   project_name   = local.project_name
@@ -17,11 +17,16 @@ module "azure_web_app_services_hosting" {
   service_health_check_path      = local.service_health_check_path
   service_log_storage_sas_start  = local.service_log_storage_sas_start
   service_log_storage_sas_expiry = local.service_log_storage_sas_expiry
+  service_log_ipv4_allow_list    = local.service_log_ipv4_allow_list
 
   enable_monitoring            = local.enable_monitoring
   monitor_endpoint_healthcheck = local.monitor_endpoint_healthcheck
   monitor_email_receivers      = local.monitor_email_receivers
   existing_logic_app_workflow  = local.existing_logic_app_workflow
+
+  enable_event_hub                          = local.enable_event_hub
+  enable_logstash_consumer                  = local.enable_logstash_consumer
+  eventhub_export_log_analytics_table_names = local.eventhub_export_log_analytics_table_names
 
   enable_cdn_frontdoor                            = local.enable_cdn_frontdoor
   restrict_web_app_service_to_cdn_inbound_only    = local.restrict_web_app_service_to_cdn_inbound_only
