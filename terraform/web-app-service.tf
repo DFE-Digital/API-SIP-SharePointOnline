@@ -1,5 +1,5 @@
 module "azure_web_app_services_hosting" {
-  source = "github.com/DFE-Digital/terraform-azurerm-web-app-services-hosting?ref=v0.1.2"
+  source = "github.com/DFE-Digital/terraform-azurerm-web-app-services-hosting?ref=v0.1.3"
 
   environment    = local.environment
   project_name   = local.project_name
@@ -18,12 +18,10 @@ module "azure_web_app_services_hosting" {
   service_log_storage_sas_start  = local.service_log_storage_sas_start
   service_log_storage_sas_expiry = local.service_log_storage_sas_expiry
 
-  enable_monitoring              = local.enable_monitoring
-  monitor_endpoint_healthcheck   = local.monitor_endpoint_healthcheck
-  monitor_email_receivers        = local.monitor_email_receivers
-  monitor_enable_slack_webhook   = local.monitor_enable_slack_webhook
-  monitor_slack_webhook_receiver = local.monitor_slack_webhook_receiver
-  monitor_slack_channel          = local.monitor_slack_channel
+  enable_monitoring            = local.enable_monitoring
+  monitor_endpoint_healthcheck = local.monitor_endpoint_healthcheck
+  monitor_email_receivers      = local.monitor_email_receivers
+  existing_logic_app_workflow  = local.existing_logic_app_workflow
 
   enable_cdn_frontdoor                            = local.enable_cdn_frontdoor
   restrict_web_app_service_to_cdn_inbound_only    = local.restrict_web_app_service_to_cdn_inbound_only
