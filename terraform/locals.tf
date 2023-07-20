@@ -15,6 +15,7 @@ locals {
   service_worker_count                            = var.service_worker_count
   service_log_storage_sas_start                   = var.service_log_storage_sas_start
   service_log_storage_sas_expiry                  = var.service_log_storage_sas_expiry
+  service_log_ipv4_allow_list                     = var.service_log_ipv4_allow_list
   enable_monitoring                               = var.enable_monitoring
   monitor_endpoint_healthcheck                    = var.monitor_endpoint_healthcheck
   monitor_email_receivers                         = var.monitor_email_receivers
