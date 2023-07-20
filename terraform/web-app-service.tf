@@ -24,6 +24,10 @@ module "azure_web_app_services_hosting" {
   monitor_email_receivers      = local.monitor_email_receivers
   existing_logic_app_workflow  = local.existing_logic_app_workflow
 
+  enable_event_hub                          = local.enable_event_hub
+  enable_logstash_consumer                  = local.enable_logstash_consumer
+  eventhub_export_log_analytics_table_names = local.eventhub_export_log_analytics_table_names
+
   enable_cdn_frontdoor                            = local.enable_cdn_frontdoor
   restrict_web_app_service_to_cdn_inbound_only    = local.restrict_web_app_service_to_cdn_inbound_only
   cdn_frontdoor_sku                               = local.cdn_frontdoor_sku
