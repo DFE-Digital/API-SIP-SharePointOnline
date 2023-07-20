@@ -18,9 +18,7 @@ locals {
   enable_monitoring                               = var.enable_monitoring
   monitor_endpoint_healthcheck                    = var.monitor_endpoint_healthcheck
   monitor_email_receivers                         = var.monitor_email_receivers
-  monitor_enable_slack_webhook                    = var.monitor_enable_slack_webhook
-  monitor_slack_webhook_receiver                  = var.monitor_slack_webhook_receiver
-  monitor_slack_channel                           = var.monitor_slack_channel
+  existing_logic_app_workflow                     = var.existing_logic_app_workflow
   virtual_network_address_space                   = var.virtual_network_address_space
   enable_cdn_frontdoor                            = var.enable_cdn_frontdoor
   cdn_frontdoor_sku                               = var.cdn_frontdoor_sku
