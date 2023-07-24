@@ -30,6 +30,7 @@ module "azure_web_app_services_hosting" {
 
   enable_cdn_frontdoor                            = local.enable_cdn_frontdoor
   restrict_web_app_service_to_cdn_inbound_only    = local.restrict_web_app_service_to_cdn_inbound_only
+  web_app_service_allow_ips_inbound               = local.web_app_service_allow_ips_inbound
   cdn_frontdoor_sku                               = local.cdn_frontdoor_sku
   cdn_frontdoor_health_probe_path                 = local.cdn_frontdoor_health_probe_path
   cdn_frontdoor_health_probe_interval             = local.cdn_frontdoor_health_probe_interval
@@ -41,4 +42,6 @@ module "azure_web_app_services_hosting" {
   cdn_frontdoor_rate_limiting_duration_in_minutes = local.cdn_frontdoor_rate_limiting_duration_in_minutes
   cdn_frontdoor_rate_limiting_threshold           = local.cdn_frontdoor_rate_limiting_threshold
   cdn_frontdoor_origin_fqdn_override              = local.cdn_frontdoor_origin_fqdn_override
+  cdn_frontdoor_origin_host_header_override       = local.cdn_frontdoor_origin_host_header_override
+  cdn_frontdoor_forwarding_protocol               = local.cdn_frontdoor_forwarding_protocol
 }
