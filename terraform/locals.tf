@@ -33,7 +33,10 @@ locals {
   cdn_frontdoor_rate_limiting_duration_in_minutes = var.cdn_frontdoor_rate_limiting_duration_in_minutes
   cdn_frontdoor_rate_limiting_threshold           = var.cdn_frontdoor_rate_limiting_threshold
   cdn_frontdoor_origin_fqdn_override              = var.cdn_frontdoor_origin_fqdn_override
+  cdn_frontdoor_origin_host_header_override       = var.cdn_frontdoor_origin_host_header_override
+  cdn_frontdoor_forwarding_protocol               = var.cdn_frontdoor_forwarding_protocol
   restrict_web_app_service_to_cdn_inbound_only    = var.restrict_web_app_service_to_cdn_inbound_only
+  web_app_service_allow_ips_inbound               = var.web_app_service_allow_ips_inbound
   enable_event_hub                                = var.enable_event_hub
   enable_logstash_consumer                        = var.enable_logstash_consumer
   eventhub_export_log_analytics_table_names       = var.eventhub_export_log_analytics_table_names

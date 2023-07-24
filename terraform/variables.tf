@@ -110,6 +110,12 @@ variable "virtual_network_address_space" {
   type        = string
 }
 
+variable "web_app_service_allow_ips_inbound" {
+  description = "Restricts access to the Web App by creating a network security group rule that only allow inbound traffic from the provided list of IPs"
+  type        = list(string)
+  default     = []
+}
+
 variable "enable_cdn_frontdoor" {
   description = "Enable Azure CDN Front Door. This will use the Web App default hostname as the origin."
   type        = bool
@@ -119,6 +125,19 @@ variable "cdn_frontdoor_origin_fqdn_override" {
   description = "Manually specify the hostname that the CDN Front Door should target. Defaults to the App Service hostname"
   type        = string
   default     = ""
+}
+
+variable "cdn_frontdoor_origin_host_header_override" {
+  description = "Manually specify the host header that the CDN sends to the target. Defaults to the recieved host header. Set to null to set it to the host_name (`cdn_frontdoor_origin_fqdn_override`)"
+  type        = string
+  default     = ""
+  nullable    = true
+}
+
+variable "cdn_frontdoor_forwarding_protocol" {
+  description = "Azure CDN Front Door forwarding protocol"
+  type        = string
+  default     = "HttpsOnly"
 }
 
 variable "cdn_frontdoor_sku" {
