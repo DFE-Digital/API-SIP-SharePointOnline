@@ -11,7 +11,7 @@ env:
 jobs:
   run-tests-with-zap:
     name: Run Cypress tests with OWASP ZAP
-    environment: development
+    environment: dev
     runs-on: ubuntu-latest
     defaults:
       run:
