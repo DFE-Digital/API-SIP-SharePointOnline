@@ -1,6 +1,6 @@
 const { defineConfig } = require("cypress");
 require("dotenv").config(); // Load the .env file
-import { generateZapReport } from './cypress/plugins/generateZapReport'
+const { generateZapReport } = require('./cypress/plugins/generateZapReport')
 
 module.exports = defineConfig({
   e2e: {

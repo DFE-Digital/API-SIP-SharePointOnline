@@ -24,6 +24,11 @@ jobs:
         run: |
           mkdir -m 777 ${{ github.workspace }}/reports
 
+      - name: Get latest ZAP container version
+        run: |
+          ZAP_VERSION="$(wget -q -O - "https://hub.docker.com/v2/repositories/softwaresecurityproject/zap-stable/tags?page_size=2" | grep -o '"name": *"[^"]*' | grep -o '[^"]*$' | tail -n 1)"
+          echo "ZAP_VERSION=${ZAP_VERSION}">> $GITHUB_ENV
+
       - name: Restore ZAP container from cache if exists
         id: cache-docker-zap
         uses: actions/cache@v3
