@@ -6,8 +6,7 @@
   "scripts": {
     "cy:run": "cypress run --env url=$url",
     "cy:open": "cypress open",
-    "lint": "eslint . --ext .cy.js,.jsx,.ts,.tsx",
-    "zap": "cypress run --env url=$url,zap=true,zapAddress=$ZAP_ADDRESS,zapPort=$ZAP_PORT,zapApiKey=$ZAP_API_KEY"
+    "lint": "eslint . --ext .cy.js,.jsx,.ts,.tsx"
   },
   "keywords": [],
   "author": "",
