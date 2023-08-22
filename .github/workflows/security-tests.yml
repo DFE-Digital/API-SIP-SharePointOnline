@@ -11,7 +11,7 @@ env:
 jobs:
   run-tests-with-zap:
     name: Run Cypress tests with OWASP ZAP
-    environment: development
+    environment: dev
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -23,6 +23,11 @@ jobs:
       - name: Create directory on runner
         run: |
           mkdir -m 777 ${{ github.workspace }}/reports
+
+      - name: Get latest ZAP container version
+        run: |
+          ZAP_VERSION="$(wget -q -O - "https://hub.docker.com/v2/repositories/softwaresecurityproject/zap-stable/tags?page_size=2" | grep -o '"name": *"[^"]*' | grep -o '[^"]*$' | tail -n 1)"
+          echo "ZAP_VERSION=${ZAP_VERSION}">> $GITHUB_ENV
 
       - name: Restore ZAP container from cache if exists
         id: cache-docker-zap
@@ -53,12 +58,13 @@ jobs:
       - name: Run Cypress tests
         env:
           url: ${{ secrets.AZURE_ENDPOINT }}
+          ZAP: true
           ZAP_API_KEY: ${{ env.ZAP_API_KEY }}
           ZAP_ADDRESS: ${{ env.ZAP_ADDRESS }}
           ZAP_PORT: ${{ env.ZAP_PORT }}
           HTTP_PROXY: "http://${{ env.ZAP_ADDRESS }}:${{ env.ZAP_PORT }}"
           NO_PROXY: ".gvt1.com"
-        run: npm run zap
+        run: npm run cy:run
 
       - name: Upload screenshots
         if: ${{ failure() }}
