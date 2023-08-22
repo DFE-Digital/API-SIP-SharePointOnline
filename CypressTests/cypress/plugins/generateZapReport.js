@@ -3,18 +3,21 @@ const fs = require('fs')
 
 module.exports = {
   generateZapReport: async () => {
+
+    console.log('Generating ZAP report')
+
     const zapOptions = {
-      apiKey: process.env.zapApiKey,
+      apiKey: process.env.ZAP_API_KEY,
       proxy: {
-          host: process.env.zapAddress,
-          port: process.env.zapPort
+          host: process.env.ZAP_ADDRESS,
+          port: process.env.ZAP_PORT
       }
     }
     const zaproxy = new ZapClient(zapOptions)
     // Wait for passive scanner to finish scanning before generating report
     let recordsRemaining = 100
     while (recordsRemaining !== 0) {
-      await zap.pscan.recordsToScan()
+      await zaproxy.pscan.recordsToScan()
         .then((resp) => {
           try {
             recordsRemaining = parseInt(resp.recordsToScan, 10)
@@ -33,7 +36,7 @@ module.exports = {
         })
     }
 
-    await zap.reports.generate({
+    await zaproxy.reports.generate({
       title: 'Report',
       template: 'traditional-html',
       reportfilename: 'ZAP-Report.html',
@@ -45,5 +48,5 @@ module.exports = {
     .catch((err) => {
       console.log(`Error from ZAP Report API: ${err}`)
     })
-    }
   }
+}
