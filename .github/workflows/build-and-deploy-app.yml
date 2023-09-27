@@ -138,6 +138,7 @@ jobs:
     needs:
       - set-env
       - build-app
+      - deploy-app
     runs-on: ubuntu-latest
     environment: ${{ needs.set-env.outputs.environment }}
     defaults:
@@ -153,7 +154,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-      
+
       - name: npm install
         run: npm install
 
