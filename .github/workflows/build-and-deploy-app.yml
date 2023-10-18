@@ -90,7 +90,7 @@ jobs:
           nuget-version: ${{ needs.set-env.outputs.nuget_version }}
 
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v1.3
 
       - name: NuGet restore
         run: nuget restore DFE.SIP.API.SharePointOnline.sln
