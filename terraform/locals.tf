@@ -41,4 +41,8 @@ locals {
   enable_logstash_consumer                        = var.enable_logstash_consumer
   eventhub_export_log_analytics_table_names       = var.eventhub_export_log_analytics_table_names
   tags                                            = var.tags
+  statuscake_monitored_resource_addresses         = var.statuscake_monitored_resource_addresses
+  statuscake_contact_group_name                   = var.statuscake_contact_group_name
+  statuscake_contact_group_integrations           = var.statuscake_contact_group_integrations
+  statuscake_contact_group_email_addresses        = var.statuscake_contact_group_email_addresses
 }
