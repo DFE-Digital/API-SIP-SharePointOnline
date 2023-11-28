@@ -21,4 +21,5 @@ module.exports = defineConfig({
     url: process.env.url,
     video: false
   },
+  userAgent: 'SipApiSharePointOnline/1.0 Cypress',
 });
