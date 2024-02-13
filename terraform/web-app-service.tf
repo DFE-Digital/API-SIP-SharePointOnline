@@ -1,5 +1,5 @@
 module "azure_web_app_services_hosting" {
-  source = "github.com/DFE-Digital/terraform-azurerm-web-app-services-hosting?ref=v0.5.0"
+  source = "github.com/DFE-Digital/terraform-azurerm-web-app-services-hosting?ref=v0.6.0"
 
   environment    = local.environment
   project_name   = local.project_name
