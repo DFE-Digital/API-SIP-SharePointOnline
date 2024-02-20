@@ -23,7 +23,7 @@ jobs:
         fetch-depth: 0 # Shallow clones disabled for a better relevancy of SC analysis
 
     - name: Install Nuget
-      uses: nuget/setup-nuget@v1
+      uses: nuget/setup-nuget@v2
       with:
         nuget-version: ${{ needs.set-env.outputs.nuget_version }}
 

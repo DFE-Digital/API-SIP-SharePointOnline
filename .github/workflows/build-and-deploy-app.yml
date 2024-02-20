@@ -85,7 +85,7 @@ jobs:
           ref: ${{ github.ref }}
 
       - name: Install Nuget
-        uses: nuget/setup-nuget@v1
+        uses: nuget/setup-nuget@v2
         with:
           nuget-version: ${{ needs.set-env.outputs.nuget_version }}
 
