@@ -26,10 +26,6 @@ namespace DFE.SIP.API.SharePointOnline.Controllers
         {
             AppSettingsManager appSettings = new AppSettingsManager();
             return "BuildVersion:" + appSettings.Get(appSettings.BuildVersion);
-
-          
         }
-
-
     }
 }
