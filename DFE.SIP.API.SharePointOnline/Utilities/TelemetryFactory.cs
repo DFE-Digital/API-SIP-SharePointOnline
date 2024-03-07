@@ -14,7 +14,7 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
             if (_telemetryClient == null)
             {
                 // Overrides the ApplicationInsights.config connection string
-                TelemetryConfiguration.Active.ConnectionString = $"InstrumentationKey={AppSettings.Get(AppSettings.APPINSIGHTS_KEY)}";
+                TelemetryConfiguration.Active.ConnectionString = AppSettings.Get(AppSettings.ApplicationInsightsConnectionString);
 
                 _telemetryClient = new TelemetryClient();
 

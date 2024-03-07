@@ -21,7 +21,9 @@ namespace DFE.SIP.API.SharePointOnline.Utilities
         public readonly string Environment = "Environment";
         public readonly string A2CEntitiesAllowedToCRUDFiles = "A2CEntitiesAllowedToCRUDFiles";
         public readonly string BuildVersion = "BuildVersion";
-        
+        public readonly string ApplicationInsightsConnectionString = "APPLICATIONINSIGHTS_CONNECTION_STRING";
+
+
 
         public AppSettingsManager() { }
         
