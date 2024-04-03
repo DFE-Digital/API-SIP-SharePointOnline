@@ -140,6 +140,12 @@ variable "cdn_frontdoor_sku" {
   type        = string
 }
 
+variable "enable_cdn_frontdoor_health_probe" {
+  description = "Enable CDN Front Door health probe"
+  type        = bool
+  default     = false
+}
+
 variable "cdn_frontdoor_health_probe_interval" {
   description = "Specifies the number of seconds between health probes."
   type        = number
