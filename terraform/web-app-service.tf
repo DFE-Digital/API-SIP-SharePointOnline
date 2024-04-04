@@ -44,4 +44,5 @@ module "azure_web_app_services_hosting" {
   cdn_frontdoor_origin_fqdn_override              = local.cdn_frontdoor_origin_fqdn_override
   cdn_frontdoor_origin_host_header_override       = local.cdn_frontdoor_origin_host_header_override
   cdn_frontdoor_forwarding_protocol               = local.cdn_frontdoor_forwarding_protocol
+  enable_cdn_frontdoor_health_probe               = local.enable_cdn_frontdoor_health_probe
 }
