@@ -6,7 +6,7 @@
   "scripts": {
     "cy:run": "cypress run --env url=$url",
     "cy:open": "cypress open",
-    "lint": "eslint . --ext .cy.js,.jsx,.ts,.tsx"
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
@@ -16,7 +16,7 @@
     "dotenv": "^16.3.1"
   },
   "devDependencies": {
-    "eslint": "^8.45.0",
+    "eslint": "^9.2.0",
     "eslint-plugin-cypress": "^3.0.0",
     "zaproxy": "^2.0.0-rc.2"
   }
