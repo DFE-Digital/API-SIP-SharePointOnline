@@ -24,10 +24,10 @@ env:
 
 jobs:
   cypress-tests:
-    if: needs.set-env.outputs.environment == 'test' || needs.set-env.outputs.environment == 'dev'
-    name: Run Cypress tests on ${{ needs.set-env.outputs.environment }}
+    if: inputs.environment == 'test' || inputs.environment == 'dev'
+    name: Run Cypress tests on ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    environment: ${{ needs.set-env.outputs.environment }}
+    environment: ${{ inputs.environment }}
     defaults:
       run:
         working-directory: CypressTests
