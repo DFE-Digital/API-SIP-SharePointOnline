@@ -1,0 +1,58 @@
+name: Run Cypress tests
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      AZURE_ENDPOINT:
+        required: true
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run tests against'
+        required: true
+        type: environment
+
+concurrency:
+  group: ${{ github.workflow }}
+
+env:
+  NODE_VERSION: 18.x
+
+jobs:
+  cypress-tests:
+    if: needs.set-env.outputs.environment == 'test' || needs.set-env.outputs.environment == 'dev'
+    name: Run Cypress tests on ${{ needs.set-env.outputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ needs.set-env.outputs.environment }}
+    defaults:
+      run:
+        working-directory: CypressTests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: npm install
+        run: npm install
+
+      - name: Run cypress
+        run: npm run cy:run
+        env:
+          url: ${{ secrets.AZURE_ENDPOINT }}
+
+      - name: Upload screenshots
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ needs.set-env.outputs.environment }}
+          path: CypressTests/cypress/screenshots
