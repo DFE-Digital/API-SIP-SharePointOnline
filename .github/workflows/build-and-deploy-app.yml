@@ -133,39 +133,11 @@ jobs:
           package: './package'
 
   cypress-tests:
-    if: needs.set-env.outputs.environment == 'test' || needs.set-env.outputs.environment == 'dev'
-    name: Run Cypress tests on ${{ needs.set-env.outputs.environment }}
-    needs:
-      - set-env
-      - build-app
-      - deploy-app
-    runs-on: ubuntu-latest
-    environment: ${{ needs.set-env.outputs.environment }}
-    defaults:
-      run:
-        working-directory: CypressTests
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: npm install
-        run: npm install
-
-      - name: Run cypress
-        run: npm run cy:run
-        env:
-          url: ${{ secrets.AZURE_ENDPOINT }}
-
-      - name: Upload screenshots
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots-${{ needs.set-env.outputs.environment }}
-          path: CypressTests/cypress/screenshots
+    name: Run Cypress tests
+    needs: [ set-env, build-app, deploy-app ]
+    if: needs.set-env.outputs.environment == 'test' || needs.set-env.outputs.environment == 'development'
+    uses: ./.github/workflows/cypress-tests.yml
+    with:
+      environment: ${{ needs.set-env.outputs.environment }}
+    secrets:
+      AZURE_ENDPOINT: ${{ secrets.AZURE_ENDPOINT }}
