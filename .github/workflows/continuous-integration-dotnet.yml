@@ -7,14 +7,12 @@ on:
     paths:
       - 'DFE.*/**'
       - '!CypressTests/**'
-      - '**/*.csproj'
   pull_request:
     branches: [ master ]
     types: [ opened, synchronize, reopened ]
     paths:
       - 'DFE.*/**'
       - '!CypressTests/**'
-      - '**/*.csproj'
 
 env:
   JAVA_VERSION: '17'
