@@ -8,6 +8,10 @@ provider "azurerm" {
   subscription_id            = var.azure_subscription_id
 }
 
+provider "azapi" {
+  enable_hcl_output_for_data_source = true
+}
+
 provider "statuscake" {
   api_token = var.statuscake_api_token
 }
