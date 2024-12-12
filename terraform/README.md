@@ -125,9 +125,10 @@ If everything looks good, answer `yes` and wait for the new infrastructure to be
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.6.1 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 3.76.0 |
-| <a name="requirement_statuscake"></a> [statuscake](#requirement\_statuscake) | >= 2.1.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.9 |
+| <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | ~> 1.13 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.0 |
+| <a name="requirement_statuscake"></a> [statuscake](#requirement\_statuscake) | ~> 2.1 |
 
 ## Providers
 
@@ -137,9 +138,9 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_azure_web_app_services_hosting"></a> [azure\_web\_app\_services\_hosting](#module\_azure\_web\_app\_services\_hosting) | github.com/DFE-Digital/terraform-azurerm-web-app-services-hosting | v0.6.2 |
-| <a name="module_azurerm_key_vault"></a> [azurerm\_key\_vault](#module\_azurerm\_key\_vault) | github.com/DFE-Digital/terraform-azurerm-key-vault-tfvars | v0.5.0 |
-| <a name="module_statuscake-tls-monitor"></a> [statuscake-tls-monitor](#module\_statuscake-tls-monitor) | github.com/dfe-digital/terraform-statuscake-tls-monitor | v0.1.4 |
+| <a name="module_azure_web_app_services_hosting"></a> [azure\_web\_app\_services\_hosting](#module\_azure\_web\_app\_services\_hosting) | github.com/DFE-Digital/terraform-azurerm-web-app-services-hosting | v0.8.0 |
+| <a name="module_azurerm_key_vault"></a> [azurerm\_key\_vault](#module\_azurerm\_key\_vault) | github.com/DFE-Digital/terraform-azurerm-key-vault-tfvars | v0.5.1 |
+| <a name="module_statuscake-tls-monitor"></a> [statuscake-tls-monitor](#module\_statuscake-tls-monitor) | github.com/dfe-digital/terraform-statuscake-tls-monitor | v0.1.5 |
 
 ## Resources
 
