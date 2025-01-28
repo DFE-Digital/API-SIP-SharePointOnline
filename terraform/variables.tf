@@ -135,6 +135,7 @@ variable "web_app_service_allow_ips_inbound" {
 variable "enable_cdn_frontdoor" {
   description = "Enable Azure CDN Front Door. This will use the Web App default hostname as the origin."
   type        = bool
+  default     = false
 }
 
 variable "cdn_frontdoor_origin_fqdn_override" {
@@ -159,6 +160,7 @@ variable "cdn_frontdoor_forwarding_protocol" {
 variable "cdn_frontdoor_sku" {
   description = "Azure CDN Front Door SKU"
   type        = string
+  default     = "Standard_AzureFrontDoor"
 }
 
 variable "enable_cdn_frontdoor_health_probe" {
@@ -182,6 +184,7 @@ variable "cdn_frontdoor_health_probe_path" {
 variable "cdn_frontdoor_response_timeout" {
   description = "Azure CDN Front Door response timeout in seconds"
   type        = number
+  default     = 120
 }
 
 variable "cdn_frontdoor_host_add_response_headers" {
@@ -205,6 +208,7 @@ variable "cdn_frontdoor_host_redirects" {
 variable "cdn_frontdoor_enable_rate_limiting" {
   description = "CDN Front Door enable rate limiting"
   type        = bool
+  default     = false
 }
 
 variable "cdn_frontdoor_rate_limiting_duration_in_minutes" {
@@ -222,6 +226,7 @@ variable "cdn_frontdoor_rate_limiting_threshold" {
 variable "restrict_web_app_service_to_cdn_inbound_only" {
   description = "Restricts access to the Web App by addin an ip restriction rule which only allows 'AzureFrontDoor.Backend' inbound and matches the cdn fdid header. It also creates a network security group that only allows 'AzureFrontDoor.Backend' inbound, and attaches it to the subnet of the web app."
   type        = bool
+  default     = false
 }
 
 variable "tags" {
@@ -282,4 +287,10 @@ variable "statuscake_contact_group_email_addresses" {
   description = "List of email address that should receive notifications from StatusCake"
   type        = list(string)
   default     = []
+}
+
+variable "monitor_http_availability_fqdn" {
+  description = "Specify a FQDN to monitor for HTTP Availability. Leave unset to dynamically calculate the correct FQDN"
+  type        = string
+  default     = ""
 }
