@@ -18,6 +18,7 @@ locals {
   enable_monitoring                               = var.enable_monitoring
   monitor_endpoint_healthcheck                    = var.monitor_endpoint_healthcheck
   monitor_email_receivers                         = var.monitor_email_receivers
+  monitor_http_availability_fqdn                  = var.monitor_http_availability_fqdn
   existing_logic_app_workflow                     = var.existing_logic_app_workflow
   virtual_network_address_space                   = var.virtual_network_address_space
   enable_cdn_frontdoor                            = var.enable_cdn_frontdoor
