@@ -111,4 +111,3 @@ node_modules
 CypressTests/screenshots
 CypressTests/videos
 CypressTests/downloads
-CypressTests/cypress/reports/*.*
