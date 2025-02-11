@@ -40,18 +40,14 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: npm install
-        run: npm install
-
-      - name: Run cypress
-        run: npm run cy:run
+       name: Run
+        uses: cypress-io/github-action@v6
+	
         env:
-          url: ${{ secrets.AZURE_ENDPOINT }}
+          CYPRESS_url: ${{ secrets.URL }}
+        with:
+          browser: ${{ matrix.browser }}
+          working-directory: CypressTests
 
       - name: Upload screenshots
         if: ${{ failure() }}
