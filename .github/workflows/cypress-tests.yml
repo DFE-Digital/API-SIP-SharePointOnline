@@ -9,6 +9,8 @@ on:
     secrets:
       AZURE_ENDPOINT:
         required: true
+      SLACK_WEBHOOK_URL:
+        required: true
   workflow_dispatch:
     inputs:
       environment:
@@ -19,15 +21,15 @@ on:
 concurrency:
   group: ${{ github.workflow }}
 
-env:
-  NODE_VERSION: 18.x
-
 jobs:
   cypress-tests:
     if: inputs.environment == 'test' || inputs.environment == 'dev'
     name: Run Cypress tests on ${{ inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    strategy:
+      matrix:
+        browser: ["edge"]
     defaults:
       run:
         working-directory: CypressTests
@@ -37,18 +39,13 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: npm install
-        run: npm install
-
-      - name: Run cypress
-        run: npm run cy:run
+      - name: Run
+        uses: cypress-io/github-action@v6
         env:
-          url: ${{ secrets.AZURE_ENDPOINT }}
+          CYPRESS_url: ${{ secrets.AZURE_ENDPOINT }}
+        with:
+          browser: ${{ matrix.browser }}
+          working-directory: CypressTests
 
       - name: Upload screenshots
         if: ${{ failure() }}
@@ -56,3 +53,22 @@ jobs:
         with:
           name: screenshots-${{ needs.set-env.outputs.environment }}
           path: CypressTests/cypress/screenshots
+
+      - name: Generate report
+        if: always()
+        run: |
+          mkdir mochareports
+          npm run generate:html:report
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ inputs.environment }}-${{ matrix.browser }}
+          path: CypressTests/mochareports
+
+      - name: Report results
+        if: always()
+        run: npm run cy:notify -- --custom-text="Environment ${{ inputs.environment }}, See more information https://github.com/DFE-Digital/API-SIP-SharePointOnline/actions/runs/${{github.run_id}}"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
