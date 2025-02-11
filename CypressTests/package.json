@@ -4,8 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "cy:run": "cypress run",
-    "cy:open": "cypress open",
+    "cy:open": "npm run clean:reports && cypress open",
+    "cy:run": "npm run clean:reports && cypress run",
+    "cy:zap": "npm run clean:reports && cypress run",
+    "cy:notify": "cypress-slack-reporter",
+    "clean:reports": "rm -rf cypress/reports/mocha/*.json",
+    "combine:reports": "mochawesome-merge cypress/reports/mocha/*.json> mochareports/report.json",
+    "create:html:report": "marge mochareports/report.json -f report -o mochareports",
+    "generate:html:report": "npm run combine:reports && npm run create:html:report",
     "lint": "eslint ."
   },
   "keywords": [],
