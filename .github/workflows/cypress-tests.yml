@@ -8,6 +8,9 @@ on:
         type: string
     secrets:
       AZURE_ENDPOINT:
+      url:
+        required: true
+      SLACK_WEBHOOK_URL:
         required: true
   workflow_dispatch:
     inputs:
@@ -56,3 +59,21 @@ jobs:
         with:
           name: screenshots-${{ needs.set-env.outputs.environment }}
           path: CypressTests/cypress/screenshots
+     - name: Generate report
+        if: always()
+        run: |
+          mkdir mochareports
+          npm run generate:html:report
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ inputs.environment }}-${{ matrix.browser }}
+          path: CypressTests/cypress/reports/mocha
+
+      - name: Report results
+        if: always()
+        run: npm run cy:notify -- --custom-text="Environment ${{ inputs.environment }}, See more information https://github.com/DFE-Digital/academies-academisation-api/actions/runs/${{github.run_id}}"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
