@@ -58,6 +58,7 @@ jobs:
           path: CypressTests/cypress/screenshots
           
      - name: Generate report
+     - working-directory: CypressTests
         if: always()
         run: |
           mkdir mochareports
