@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "cy:open": "npm run clean:reports && cypress open",
-    "cy:run": "npm run clean:reports && cypress run",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
     "cy:zap": "npm run clean:reports && cypress run",
     "cy:notify": "cypress-slack-reporter",
     "clean:reports": "rm -rf cypress/reports/mocha/*.json",

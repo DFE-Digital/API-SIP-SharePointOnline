@@ -6,7 +6,6 @@ on:
       environment:
         required: true
         type: string
-	required: true
     secrets:
       AZURE_ENDPOINT:
         required: true      
@@ -31,6 +30,9 @@ jobs:
     name: Run Cypress tests on ${{ inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    strategy:
+      matrix:
+        browser: [edge]
     defaults:
       run:
         working-directory: CypressTests
@@ -44,7 +46,7 @@ jobs:
         uses: cypress-io/github-action@v6
 	
         env:
-          CYPRESS_url: ${{ secrets.URL }}
+          CYPRESS_url: ${{ secrets.AZURE_ENDPOINT }}
         with:
           browser: ${{ matrix.browser }}
           working-directory: CypressTests
@@ -60,7 +62,6 @@ jobs:
         if: always()
         run: |
           mkdir mochareports
-          npm run generate:html:report
 
       - name: Upload report
         if: always()
@@ -70,7 +71,9 @@ jobs:
           path: CypressTests/cypress/reports/mocha
 
       - name: Report results
+        working-directory: CypressTests
         if: always()
         run: npm run cy:notify -- --custom-text="Environment ${{ inputs.environment }}, See more information https://github.com/DFE-Digital/API-SIP-SharePointOnline/actions/runs/${{github.run_id}}"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+	  
