@@ -32,7 +32,7 @@ jobs:
     environment: ${{ inputs.environment }}
     strategy:
       matrix:
-        browser: [edge]
+        browser: ["edge"]
     defaults:
       run:
         working-directory: CypressTests
@@ -44,7 +44,6 @@ jobs:
 
        name: Run
         uses: cypress-io/github-action@v6
-	
         env:
           CYPRESS_url: ${{ secrets.AZURE_ENDPOINT }}
         with:
@@ -76,4 +75,3 @@ jobs:
         run: npm run cy:notify -- --custom-text="Environment ${{ inputs.environment }}, See more information https://github.com/DFE-Digital/API-SIP-SharePointOnline/actions/runs/${{github.run_id}}"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-	  
