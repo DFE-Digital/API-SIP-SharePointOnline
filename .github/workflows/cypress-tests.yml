@@ -42,7 +42,7 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
-       name: Run
+      - name: Run
         uses: cypress-io/github-action@v6
         env:
           CYPRESS_url: ${{ secrets.AZURE_ENDPOINT }}
@@ -58,17 +58,17 @@ jobs:
           path: CypressTests/cypress/screenshots
           
      - name: Generate report
-     - working-directory: CypressTests
         if: always()
         run: |
           mkdir mochareports
+          npm run generate:html:report
 
       - name: Upload report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: reports-${{ inputs.environment }}-${{ matrix.browser }}
-          path: CypressTests/cypress/reports/mocha
+          path: API-SIP-SharePointOnline/CypressTests/mochareports
 
       - name: Report results
         working-directory: CypressTests
