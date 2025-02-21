@@ -135,9 +135,10 @@ jobs:
   cypress-tests:
     name: Run Cypress tests
     needs: [ set-env, build-app, deploy-app ]
-    if: needs.set-env.outputs.environment == 'test' || needs.set-env.outputs.environment == 'development'
+    if: needs.set-env.outputs.environment == 'test' || needs.set-env.outputs.environment == 'dev'
     uses: ./.github/workflows/cypress-tests.yml
     with:
       environment: ${{ needs.set-env.outputs.environment }}
     secrets:
       AZURE_ENDPOINT: ${{ secrets.AZURE_ENDPOINT }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
