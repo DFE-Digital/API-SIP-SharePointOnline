@@ -2,17 +2,8 @@ name: SonarCloud scanning and coverage generation
 
 on:
   push:
-    branches:
-      - master
-    paths:
-      - 'DFE.*/**'
-      - '!CypressTests/**'
-  pull_request:
     branches: [ master ]
-    types: [ opened, synchronize, reopened ]
-    paths:
-      - 'DFE.*/**'
-      - '!CypressTests/**'
+  pull_request:
 
 env:
   JAVA_VERSION: '17'
