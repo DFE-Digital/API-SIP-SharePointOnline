@@ -20,8 +20,6 @@ jobs:
 
     - name: Install Nuget
       uses: nuget/setup-nuget@v2
-      with:
-        nuget-version: ${{ needs.set-env.outputs.nuget_version }}
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.3
@@ -35,13 +33,6 @@ jobs:
         java-version: ${{ env.JAVA_VERSION }}
         distribution: 'microsoft'
 
-    - name: Cache SonarCloud packages
-      uses: actions/cache@v4
-      with:
-        path: ~\sonar\cache
-        key: ${{ runner.os }}-sonar
-        restore-keys: ${{ runner.os }}-sonar
-
     - name: Cache SonarCloud scanner
       id: cache-sonar-scanner
       uses: actions/cache@v4
@@ -49,7 +40,7 @@ jobs:
         path: .\.sonar\scanner
         key: ${{ runner.os }}-sonar-scanner
         restore-keys: ${{ runner.os }}-sonar-scanner
-    
+
     - name: Install SonarCloud scanner
       if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
       shell: powershell
