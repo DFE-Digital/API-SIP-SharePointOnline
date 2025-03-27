@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFE.SIP.API.SharePointOnlin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFE.SIP.API.SharePointOnline.Tests", "DFE.SIP.API.SharePointOnline.Tests\DFE.SIP.API.SharePointOnline.Tests.csproj", "{014B841C-A39D-4750-9561-2A0308F1C212}"
 EndProject
-Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "DFE.SIP.API.SharePointOnline.Arm", "DFE.SIP.API.SharePointOnline.Arm\DFE.SIP.API.SharePointOnline.Arm.deployproj", "{AAA5FA03-B771-4585-9DA2-B1A8E331ED23}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
