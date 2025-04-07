@@ -54,7 +54,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: powershell
       run: |
-        .\.sonar\scanner\dotnet-sonarscanner begin /d:sonar.qualitygate.wait=true /k:"API-SIP-SharePointOnline" /d:sonar.scanner.skipJreProvisioning=true /o:"dfe-digital" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        .\.sonar\scanner\dotnet-sonarscanner begin /s:${{ github.workspace }}/SonarQube.Analysis.xml /k:"API-SIP-SharePointOnline" /o:"dfe-digital" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
         msbuild -p:Configuration=Release `
             -p:DeployOnBuild=true `
             -p:PackageAsSingleFile=false `
