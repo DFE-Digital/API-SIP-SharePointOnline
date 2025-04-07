@@ -112,3 +112,7 @@ CypressTests/screenshots
 CypressTests/videos
 CypressTests/downloads
 CypressTests/reports
+
+## Editor prefs
+.vs/
+.vscode/
