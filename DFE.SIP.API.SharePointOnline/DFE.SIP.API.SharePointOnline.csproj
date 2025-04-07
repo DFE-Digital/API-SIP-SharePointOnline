@@ -214,13 +214,13 @@
     <PackageReference Include="Microsoft.Identity.Client" version="4.70.0" />
     <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" version="4.70.0" />
     <PackageReference Include="Microsoft.IdentityModel" version="7.0.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Abstractions" version="6.25.0" />
-    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" version="6.25.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Abstractions" version="6.35.0" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" version="6.34.0" />
     <PackageReference Include="Microsoft.IdentityModel.Logging" version="6.25.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Protocols" version="6.25.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" version="6.25.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols" version="6.26.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" version="6.26.1" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.WsFederation" version="6.25.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" version="6.25.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" version="6.34.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens.Saml" version="6.25.0" />
     <PackageReference Include="Microsoft.IdentityModel.Xml" version="6.25.0" />
     <PackageReference Include="Microsoft.Net.Http.Headers" version="2.3.0" />
@@ -245,9 +245,9 @@
     <PackageReference Include="System.Collections.Immutable" version="5.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" version="5.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" version="6.0.2" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" version="6.0.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" version="6.0.2" />
     <PackageReference Include="System.DirectoryServices" version="6.0.2" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" version="6.25.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" version="6.35.0" />
     <PackageReference Include="System.IO" version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" version="5.0.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" version="4.3.0" />
