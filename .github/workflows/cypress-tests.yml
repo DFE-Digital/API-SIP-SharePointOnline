@@ -35,7 +35,7 @@ jobs:
         working-directory: CypressTests
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           ref: ${{ github.ref }}
 
@@ -49,7 +49,7 @@ jobs:
 
       - name: Upload screenshots
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: screenshots-${{ needs.set-env.outputs.environment }}
           path: CypressTests/cypress/screenshots
@@ -62,7 +62,7 @@ jobs:
 
       - name: Upload report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: reports-${{ inputs.environment }}-${{ matrix.browser }}
           path: CypressTests/mochareports
