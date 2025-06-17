@@ -196,7 +196,7 @@
     <PackageReference Include="Microsoft.Data.Services.Client" version="5.8.5" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" version="6.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" version="6.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" version="6.0.2" />
@@ -208,7 +208,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" version="8.0.3" />
     <PackageReference Include="Microsoft.Extensions.Options" version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Primitives" version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.WebEncoders" version="8.0.14" />
+    <PackageReference Include="Microsoft.Extensions.WebEncoders" version="8.0.17" />
     <PackageReference Include="Microsoft.Graph" version="4.54.0" />
     <PackageReference Include="Microsoft.Graph.Core" version="2.0.15" />
     <PackageReference Include="Microsoft.Identity.Client" version="4.70.0" />
@@ -245,7 +245,7 @@
     <PackageReference Include="System.Collections.Immutable" version="5.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" version="5.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" version="6.0.2" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" version="6.0.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" version="6.0.2" />
     <PackageReference Include="System.DirectoryServices" version="6.0.2" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" version="6.25.0" />
     <PackageReference Include="System.IO" version="4.3.0" />
