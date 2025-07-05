@@ -24,7 +24,7 @@
   "devDependencies": {
     "cypress-multi-reporters": "^2.0.5",
     "cypress-slack-reporter": "^1.5.4",
-    "eslint": "9.24.0",
+    "eslint": "9.30.0",
     "eslint-plugin-cypress": "3.6.0",
     "mocha": "11.1.0",
     "mochawesome": "7.1.3",
