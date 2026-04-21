@@ -181,12 +181,12 @@
     <PackageReference Include="Microsoft.AspNet.WebApi.HelpPage" version="5.3.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.WebHost" version="5.3.0" />
     <PackageReference Include="Microsoft.AspNet.WebPages" version="3.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" version="2.3.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" version="2.3.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" version="2.3.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" version="2.3.9" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" version="5.0.17" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" version="2.3.9" />
     <PackageReference Include="Microsoft.Azure.ActiveDirectory.GraphClient" version="2.1.1" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" version="8.0.0" />
     <PackageReference Include="Microsoft.Bcl.HashCode" version="1.1.1" />
@@ -196,7 +196,7 @@
     <PackageReference Include="Microsoft.Data.Services.Client" version="5.8.5" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" version="6.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" version="6.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" version="6.0.2" />
@@ -208,7 +208,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" version="8.0.3" />
     <PackageReference Include="Microsoft.Extensions.Options" version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Primitives" version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.WebEncoders" version="8.0.14" />
+    <PackageReference Include="Microsoft.Extensions.WebEncoders" version="8.0.26" />
     <PackageReference Include="Microsoft.Graph" version="4.54.0" />
     <PackageReference Include="Microsoft.Graph.Core" version="2.0.15" />
     <PackageReference Include="Microsoft.Identity.Client" version="4.70.0" />
@@ -223,7 +223,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" version="6.25.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens.Saml" version="6.25.0" />
     <PackageReference Include="Microsoft.IdentityModel.Xml" version="6.25.0" />
-    <PackageReference Include="Microsoft.Net.Http.Headers" version="2.3.0" />
+    <PackageReference Include="Microsoft.Net.Http.Headers" version="2.3.9" />
     <PackageReference Include="Microsoft.NETCore.Platforms" version="6.0.13" />
     <PackageReference Include="Microsoft.NETCore.Targets" version="5.0.0" />
     <PackageReference Include="Microsoft.Owin" version="4.2.2" />
@@ -245,7 +245,7 @@
     <PackageReference Include="System.Collections.Immutable" version="5.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" version="5.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" version="6.0.2" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" version="6.0.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" version="6.0.2" />
     <PackageReference Include="System.DirectoryServices" version="6.0.2" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" version="6.25.0" />
     <PackageReference Include="System.IO" version="4.3.0" />
@@ -275,7 +275,7 @@
     <PackageReference Include="System.Text.Encoding" version="4.3.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" version="6.0.1" />
     <PackageReference Include="System.Text.Encodings.Web" version="8.0.0" />
-    <PackageReference Include="System.Text.Json" version="8.0.5" />
+    <PackageReference Include="System.Text.Json" version="8.0.6" />
     <PackageReference Include="System.Threading.Tasks.Extensions" version="4.5.4" />
     <PackageReference Include="System.ValueTuple" version="4.6.1" />
     <PackageReference Include="TimeZoneConverter" version="6.1.0" />
