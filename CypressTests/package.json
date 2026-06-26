@@ -12,6 +12,7 @@
     "combine:reports": "mochawesome-merge cypress/reports/mocha/*.json> mochareports/report.json",
     "create:html:report": "marge mochareports/report.json -f report -o mochareports",
     "generate:html:report": "npm run combine:reports && npm run create:html:report",
+    "zap:report:teams": "node scripts/send-zap-teams-notification.js",
     "lint": "eslint ."
   },
   "keywords": [],
@@ -22,6 +23,7 @@
     "dotenv": "^16.3.1"
   },
   "devDependencies": {
+    "axios": "^1.18.1",
     "cypress-multi-reporters": "^2.0.5",
     "cypress-slack-reporter": "^1.5.4",
     "eslint": "9.24.0",
