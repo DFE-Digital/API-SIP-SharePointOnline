@@ -227,7 +227,7 @@
     <PackageReference Include="Microsoft.NETCore.Platforms" version="6.0.13" />
     <PackageReference Include="Microsoft.NETCore.Targets" version="5.0.0" />
     <PackageReference Include="Microsoft.Owin" version="4.2.2" />
-    <PackageReference Include="Microsoft.Owin.Host.SystemWeb" version="4.2.2" />
+    <PackageReference Include="Microsoft.Owin.Host.SystemWeb" version="4.2.3" />
     <PackageReference Include="Microsoft.Owin.Security" version="4.2.2" />
     <PackageReference Include="Microsoft.Owin.Security.ActiveDirectory" version="4.2.2" />
     <PackageReference Include="Microsoft.Owin.Security.Jwt" version="4.2.2" />
