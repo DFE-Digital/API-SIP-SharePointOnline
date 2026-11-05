@@ -40,19 +40,19 @@ jobs:
         run: rm ./terraform/backend.tf
 
       - name: Run a Terraform init
-        uses: docker://hashicorp/terraform:1.10.5
+        uses: docker://hashicorp/terraform:1.17.1@sha256:a5d5a5a892c98f60fcbfa81eac2a40fc19e7b3fa7719bccae10ff6111d22524a
         with:
           entrypoint: terraform
           args: -chdir=terraform init
 
       - name: Run a Terraform validate
-        uses: docker://hashicorp/terraform:1.10.5
+        uses: docker://hashicorp/terraform:1.17.1@sha256:a5d5a5a892c98f60fcbfa81eac2a40fc19e7b3fa7719bccae10ff6111d22524a
         with:
           entrypoint: terraform
           args: -chdir=terraform validate
 
       - name: Run a Terraform format check
-        uses: docker://hashicorp/terraform:1.10.5
+        uses: docker://hashicorp/terraform:1.17.1@sha256:a5d5a5a892c98f60fcbfa81eac2a40fc19e7b3fa7719bccae10ff6111d22524a
         with:
           entrypoint: terraform
           args: -chdir=terraform fmt -check=true -diff=true
